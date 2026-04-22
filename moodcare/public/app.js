@@ -49,15 +49,34 @@ function logout() {
 let vozActiva = true;
 
 function hablar(texto) {
+
+  if (!("speechSynthesis" in window)) {
+    console.log("Tu navegador no soporta voz");
+    return;
+  }
+
+  // 🔥 limpiar cola (opcional pero controlado)
   window.speechSynthesis.cancel();
 
-  setTimeout(() => {
-    const speech = new SpeechSynthesisUtterance(texto);
-    speech.lang = "es-ES";
-    speech.rate = 1;
-    speech.pitch = 1;
-    window.speechSynthesis.speak(speech);
-  }, 100);
+  const speech = new SpeechSynthesisUtterance(texto);
+
+  speech.lang = "es-ES";
+  speech.rate = 1;
+  speech.pitch = 1;
+
+  // 🔥 esperar voces correctamente
+  let voces = speechSynthesis.getVoices();
+
+  if (voces.length === 0) {
+    speechSynthesis.onvoiceschanged = () => {
+      voces = speechSynthesis.getVoices();
+      speech.voice = voces.find(v => v.lang.includes("es")) || voces[0];
+      speechSynthesis.speak(speech);
+    };
+  } else {
+    speech.voice = voces.find(v => v.lang.includes("es")) || voces[0];
+    speechSynthesis.speak(speech);
+  }
 }
 
 function toggleVoz() {
@@ -66,7 +85,10 @@ function toggleVoz() {
   const btn = document.getElementById("btnVoz");
   if (btn) btn.innerText = vozActiva ? "🔊" : "🔇";
 
-  window.speechSynthesis.cancel();
+  // 🔥 solo detener si se apaga
+  if (!vozActiva) {
+    window.speechSynthesis.cancel();
+  }
 }
 
 /* ========================= */
@@ -93,7 +115,6 @@ async function enviarMensaje() {
   const mensaje = input.value.trim();
   if (!mensaje) return;
 
-  // 🔥 ACTIVAR MODO CHAT SOLO AQUÍ
   main.classList.add("chat-activo");
   chatContainer.classList.add("active");
 
@@ -124,6 +145,11 @@ async function enviarMensaje() {
     typingDiv.innerHTML = "";
 
     escribirTexto(typingDiv, data.respuesta);
+
+    // 🔊 AQUÍ ESTÁ LA MAGIA
+    if (vozActiva) {
+      hablar(data.respuesta);
+    }
 
   } catch (error) {
     chat.innerHTML += `<div class="msg-bot">Error al conectar</div>`;
