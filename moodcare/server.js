@@ -1,4 +1,5 @@
 const express = require("express");
+const conversaciones = {};
 const axios = require("axios");
 const path = require("path");
 const bcrypt = require("bcrypt");
@@ -126,32 +127,103 @@ app.post("/login", async (req, res) => {
 // 🤖 IA (OLLAMA)
 // =========================
 app.post("/chat", async (req, res) => {
-  const mensaje = req.body.mensaje;
+  const { mensaje, userId } = req.body;
 
   try {
+
+    console.log("USER:", userId);
+    console.log("MENSAJE:", mensaje);
+
+    // 🔎 obtener emisores reales
+    const emisorUsuario = await pool.query(
+      `SELECT id_emisor FROM cat_emisores_mensaje WHERE codigo = 'usuario'`
+    );
+
+    const emisorIA = await pool.query(
+      `SELECT id_emisor FROM cat_emisores_mensaje WHERE codigo = 'asistente'`
+    );
+
+    const idUsuarioEmisor = emisorUsuario.rows[0].id_emisor;
+    const idIAEmisor = emisorIA.rows[0].id_emisor;
+
+    // 🔎 obtener o crear conversación
+    let conv = await pool.query(
+      `SELECT id_conversacion 
+       FROM conversaciones 
+       WHERE id_usuario = $1 
+       ORDER BY creado_en DESC LIMIT 1`,
+      [userId]
+    );
+
+    let idConversacion;
+
+    if (conv.rows.length === 0) {
+      const nueva = await pool.query(
+        `INSERT INTO conversaciones (id_usuario)
+         VALUES ($1) RETURNING id_conversacion`,
+        [userId]
+      );
+      idConversacion = nueva.rows[0].id_conversacion;
+    } else {
+      idConversacion = conv.rows[0].id_conversacion;
+    }
+
+    // 💾 guardar mensaje usuario
+    await pool.query(
+      `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
+       VALUES ($1, $2, $3)`,
+      [idConversacion, idUsuarioEmisor, mensaje]
+    );
+
+    // 📥 obtener historial real
+    const historialDB = await pool.query(
+      `SELECT contenido, id_emisor 
+       FROM mensajes 
+       WHERE id_conversacion = $1
+       ORDER BY creado_en ASC`,
+      [idConversacion]
+    );
+
+    const historialTexto = historialDB.rows
+      .map(m =>
+        `${m.id_emisor === idUsuarioEmisor ? "Usuario" : "Asistente"}: ${m.contenido}`
+      )
+      .join("\n");
+
+    // 🤖 IA con contexto REAL
     const response = await axios.post("http://localhost:11434/api/generate", {
       model: "llama3",
       prompt: `
-Eres MoodCare, un asistente emocional.
+Eres MoodCare, un asistente emocional con memoria real.
 
-- Eres empático
-- No juzgas
-- Ayudas al usuario
-- No das consejos médicos
-- Respondes claro y corto
+- Recuerda TODO lo que el usuario dijo
+- NO ignores mensajes anteriores
+- NO repitas preguntas
+- Si el usuario ya respondió algo, NO vuelvas a preguntarlo
 
-Usuario: ${mensaje}
+Conversación:
+${historialTexto}
+
+Responde al último mensaje con coherencia emocional.
+Asistente:
       `,
       stream: false
     });
 
-    res.json({
-      respuesta: response.data.response
-    });
+    const respuestaIA = response.data.response;
+
+    // 💾 guardar respuesta IA
+    await pool.query(
+      `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
+       VALUES ($1, $2, $3)`,
+      [idConversacion, idIAEmisor, respuestaIA]
+    );
+
+    res.json({ respuesta: respuestaIA });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error con IA" });
+    console.error("ERROR COMPLETO:", error);
+    res.status(500).json({ error: "Error IA" });
   }
 });
 
