@@ -1,54 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoodCare - Registro</title>
 
   <link rel="stylesheet" href="styles.css">
+
+  <!-- 🔥 CALENDARIO (PIKADAY) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+
 </head>
 
-<body class="auth-body">
+<body class="register-page">
 
-  <div class="auth-container">
+  <!-- LOGO -->
+  <div class="logo">
+    <img src="image/logo.png"> MoodCare
+  </div>
+
+  <div class="register-container">
+
+    <!-- TABS -->
+    <div class="register-tabs">
+
+      <div class="register-tab" onclick="window.location.href='login.html'">
+        <div class="register-icon-circle">
+          <img src="image/registro_iniciarsesion.png">
+        </div>
+        Iniciar Sesión
+      </div>
+
+      <div class="register-tab active">
+        <div class="register-icon-circle">
+          <img src="image/registro_barrra.png">
+        </div>
+        Registrarse
+      </div>
+
+    </div>
+
     <h2>Crear Cuenta</h2>
+    <p class="subtitle">Completa tus datos para registrarte</p>
 
-    <!-- 👇 FORMULARIO IMPORTANTE -->
+    <!-- FORM -->
     <form id="formRegister" enctype="multipart/form-data">
 
-      <input name="nombre" placeholder="Nombre completo" required>
+      <!-- NOMBRE -->
+      <div class="input-icon-box">
+        <img src="image/registro_icon.png" class="icon-left">
+        <input name="nombre" placeholder="Nombre completo" required>
+      </div>
 
-      <input name="correo" type="email" placeholder="Correo" required>
+      <!-- CORREO -->
+      <div class="input-icon-box">
+        <img src="image/registro_correo_icon.png" class="icon-left">
+        <input name="correo" type="email" placeholder="Correo electrónico" required>
+      </div>
 
-      <input name="password" type="password" placeholder="Contraseña" required>
+      <!-- PASSWORD -->
+      <div class="input-icon-box">
+        <img src="image/registro_contraseña.png" class="icon-left">
+        <input name="password" type="password" placeholder="Contraseña" minlength="6" required>
+        <img src="image/registro_vercontraseña.png" class="toggle-pass">
+      </div>
 
-      <input name="fecha_nacimiento" type="date" required>
+      <!-- 🔥 FECHA NUEVA -->
+      <div class="input-icon-box">
+        <img src="image/registro_fechacumpleaños.png" class="icon-left" onclick="document.getElementById('fecha').focus()">
+        <input id="fecha" name="fecha_nacimiento" placeholder="Selecciona tu fecha" required>
+      </div>
 
-      <input name="telefono" placeholder="Número de celular" required>
+      <!-- TELÉFONO -->
+      <div class="input-icon-box">
+        <img src="image/registro_celular.png" class="icon-left">
+        <input name="telefono" placeholder="Número de celular" maxlength="10" required>
+      </div>
 
-      <!-- 📸 FOTO -->
-      <label class="file-label">
+      <!-- FOTO -->
+      <label class="file-upload">
+        <img src="image/registro_agregarfto.png" class="icon-file">
         Foto de perfil
-        <input name="foto" type="file" accept="image/*">
+        <input name="foto" type="file" accept="image/*" hidden>
       </label>
 
-      <!-- 👁️ PREVIEW -->
-      <center><img id="preview" style="width:80px; margin-top:10px; border-radius:50%; display:none;"></center>
+      <!-- PREVIEW -->
+      <center>
+        <img id="preview" class="preview-img">
+      </center>
 
       <button type="submit">Registrarse</button>
 
     </form>
 
-    <p onclick="window.location.href='login.html'">
-      Ya tengo cuenta
+    <p class="link" onclick="window.location.href='login.html'">
+      Ya tengo cuenta <b>Iniciar sesión</b>
     </p>
+
   </div>
 
-  <!-- ========================= -->
-  <!-- 🚀 SCRIPT -->
-  <!-- ========================= -->
-  <script>
+  <!-- 🔥 SCRIPT CALENDARIO -->
+  <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 
+  <!-- SCRIPT NORMAL -->
+  <script>
     const form = document.getElementById("formRegister");
 
     form.addEventListener("submit", async (e) => {
@@ -58,22 +114,19 @@
 
       const res = await fetch("/register", {
         method: "POST",
-        body: formData // 👈 CLAVE (NO JSON)
+        body: formData
       });
 
       const data = await res.json();
 
       if (data.ok) {
-        alert("Cuenta creada correctamente 🎉");
+        alert("Cuenta creada correctamente ");
         window.location.href = "login.html";
       } else {
         alert("Error al registrar");
       }
     });
 
-    // =========================
-    // 👁️ PREVIEW IMAGEN
-    // =========================
     const inputFoto = document.querySelector('input[name="foto"]');
     const preview = document.getElementById("preview");
 
@@ -86,7 +139,46 @@
       }
     });
 
+    const telefono = document.querySelector('input[name="telefono"]');
+
+    telefono.addEventListener("input", () => {
+      telefono.value = telefono.value.replace(/\D/g, "").slice(0, 10);
+    });
+
+    const toggle = document.querySelector(".toggle-pass");
+    const password = document.querySelector('input[name="password"]');
+
+    toggle.addEventListener("click", () => {
+      password.type = password.type === "password" ? "text" : "password";
+    });
+
+    const correo = document.querySelector('input[name="correo"]');
+
+    correo.addEventListener("invalid", () => {
+      correo.setCustomValidity("Por favor ingresa un correo válido con @");
+    });
+
+    correo.addEventListener("input", () => {
+      correo.setCustomValidity("");
+    });
+
+    /* 🔥 CALENDARIO FUNCIONAL (SIN BUGS) */
+    new Pikaday({
+      field: document.getElementById('fecha'),
+
+      format: 'YYYY-MM-DD',
+
+      yearRange: [1950, new Date().getFullYear()],
+
+      maxDate: new Date(),
+      minDate: new Date(1950, 0, 1),
+
+      toString(date) {
+        return date.toLocaleDateString('es-MX');
+      }
+    });
   </script>
 
 </body>
+
 </html>
