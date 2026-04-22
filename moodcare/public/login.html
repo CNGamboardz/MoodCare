@@ -8,25 +8,76 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="auth-body">
+<body class="login-page">
 
-  <div class="auth-container">
-    <h2>Iniciar Sesión</h2>
+  <!-- LOGO -->
+  <div class="login-logo">
+    <img src="image/logo.png"> MoodCare
+  </div>
 
-    <input id="correo" placeholder="Correo">
-    <input id="password" type="password" placeholder="Contraseña">
+  <div class="login-container">
 
-    <button onclick="login()">Entrar</button>
+    <!-- 🔥 TABS -->
+    <div class="login-tabs">
+      <div class="login-tab active">
+        <div class="login-icon-circle">
+          <img src="image/registro_iniciarsesion.png">
+        </div>
+        Iniciar Sesión
+      </div>
 
-    <p onclick="window.location.href='register.html'">
-      Crear cuenta
-    </p>
+      <div class="login-tab" onclick="window.location.href='register.html'">
+        <div class="login-icon-circle">
+          <img src="image/registro_barrra.png">
+        </div>
+        Registrarse
+      </div>
+    </div>
+
+    <!-- TIPO CUENTA -->
+    <p class="login-type-title">Tipo de cuenta</p>
+
+    <div class="login-type">
+      <button class="type-btn active">👤 Usuario</button>
+      <button class="type-btn">🛡️ Administrador</button>
+    </div>
+
+    <!-- CORREO -->
+    <label>Correo electrónico</label>
+    <div class="login-input-box">
+      <img src="image/registro_correo_icon.png" class="icon-left">
+      <input id="correo" placeholder="Ingresa tu correo electrónico">
+    </div>
+
+    <!-- PASSWORD -->
+    <label>Contraseña</label>
+    <div class="login-input-box">
+      <img src="image/registro_contraseña.png" class="icon-left">
+
+      <input id="password" type="password" placeholder="Ingresa tu contraseña">
+
+      <img src="image/registro_vercontraseña.png" class="toggle-pass" id="togglePass">
+    </div>
+
+    <!-- OPCIONES -->
+    <div class="login-options">
+      <label><input type="checkbox"> Recordarme</label>
+      <span>¿Olvidaste tu contraseña?</span>
+    </div>
+
+    <button class="login-btn" onclick="login()">Entrar</button>
+
   </div>
 
   <script>
     async function login() {
       const correo = document.getElementById("correo").value;
       const password = document.getElementById("password").value;
+
+      if (!correo || !password) {
+        alert("Por favor completa todos los campos");
+        return;
+      }
 
       const res = await fetch("/login", {
         method: "POST",
@@ -43,6 +94,14 @@
         alert("Credenciales incorrectas");
       }
     }
+
+    // 👁️ mostrar contraseña
+    const toggle = document.getElementById("togglePass");
+    const password = document.getElementById("password");
+
+    toggle.addEventListener("click", () => {
+      password.type = password.type === "password" ? "text" : "password";
+    });
   </script>
 
 </body>
