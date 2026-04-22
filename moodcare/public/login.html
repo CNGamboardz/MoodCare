@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodCare - Login</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-container">
+    <h2>Iniciar Sesión</h2>
+
+    <input id="correo" placeholder="Correo">
+    <input id="password" type="password" placeholder="Contraseña">
+
+    <button onclick="login()">Entrar</button>
+
+    <p onclick="window.location.href='register.html'">
+      Crear cuenta
+    </p>
+  </div>
+
+  <script>
+    async function login() {
+      const correo = document.getElementById("correo").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo, password })
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "index.html";
+      } else {
+        alert("Credenciales incorrectas");
+      }
+    }
+  </script>
+
+</body>
+</html>

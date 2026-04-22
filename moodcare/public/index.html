@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodCare</title>
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>
+      <img src="image/logo.png" alt="logo">
+      MoodCare
+    </h2>
+
+    <nav>
+      <div class="menu-item" onclick="window.location.href='inicio.html'">
+        <img src="image/casa.png" alt="">
+        <span>Inicio</span>
+      </div>
+
+      <div class="menu-item active">
+        <img src="image/chat.png" alt="">
+        <span>Chat</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='registro.html'">
+        <img src="image/registroemocional.png" alt="">
+        <span>Registro emocional</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='historial.html'">
+        <img src="image/historial.png" alt="">
+        <span>Historial</span>
+      </div>
+    </nav>
+
+    <!-- 👤 USUARIO -->
+    <div class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg" alt="user">
+      <div>
+        <b id="nombreUser">Tu Nombre</b><br>
+        <small id="correoUser">tu@email.com</small>
+      </div>
+    </div>
+
+    <!-- 🔐 LOGOUT -->
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainChat">
+
+    <div class="chat-center" id="chatUI">
+
+      <h1><b>MoodCare</b> Assistant</h1>
+      <p>¿Cómo te sientes el día de hoy?</p>
+
+      <!-- INPUT -->
+      <div class="input-wrapper">
+        <input id="mensaje" placeholder="Escribe cómo te sientes..." />
+
+        <div class="input-actions">
+          <button id="btnMic" onclick="toggleMic()">
+            <img src="image/dictado de voz.png">
+          </button>
+
+          <button id="btnVoz" onclick="toggleVoz()">🔊</button>
+
+          <button onclick="enviarMensaje()">➤</button>
+        </div>
+      </div>
+
+      <!-- OPCIONES -->
+      <div class="quick-options">
+        <div class="option" onclick="fill('Estoy triste')">😢 Estoy triste</div>
+        <div class="option" onclick="fill('Me siento feliz')">😊 Me siento feliz</div>
+        <div class="option" onclick="fill('Tengo ansiedad')">😟 Tengo ansiedad</div>
+      </div>
+
+      <!-- CHAT -->
+      <div class="chat-container" id="chatContainer">
+        <div id="chat"></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================= -->
+  <!-- 🚀 SCRIPT -->
+  <!-- ========================= -->
+  <script src="app.js"></script>
+
+</body>
+</html>

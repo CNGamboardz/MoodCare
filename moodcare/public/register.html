@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodCare - Registro</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-container">
+    <h2>Crear Cuenta</h2>
+
+    <!-- 👇 FORMULARIO IMPORTANTE -->
+    <form id="formRegister" enctype="multipart/form-data">
+
+      <input name="nombre" placeholder="Nombre completo" required>
+
+      <input name="correo" type="email" placeholder="Correo" required>
+
+      <input name="password" type="password" placeholder="Contraseña" required>
+
+      <input name="fecha_nacimiento" type="date" required>
+
+      <input name="telefono" placeholder="Número de celular" required>
+
+      <!-- 📸 FOTO -->
+      <label class="file-label">
+        Foto de perfil
+        <input name="foto" type="file" accept="image/*">
+      </label>
+
+      <!-- 👁️ PREVIEW -->
+      <center><img id="preview" style="width:80px; margin-top:10px; border-radius:50%; display:none;"></center>
+
+      <button type="submit">Registrarse</button>
+
+    </form>
+
+    <p onclick="window.location.href='login.html'">
+      Ya tengo cuenta
+    </p>
+  </div>
+
+  <!-- ========================= -->
+  <!-- 🚀 SCRIPT -->
+  <!-- ========================= -->
+  <script>
+
+    const form = document.getElementById("formRegister");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      const res = await fetch("/register", {
+        method: "POST",
+        body: formData // 👈 CLAVE (NO JSON)
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        alert("Cuenta creada correctamente 🎉");
+        window.location.href = "login.html";
+      } else {
+        alert("Error al registrar");
+      }
+    });
+
+    // =========================
+    // 👁️ PREVIEW IMAGEN
+    // =========================
+    const inputFoto = document.querySelector('input[name="foto"]');
+    const preview = document.getElementById("preview");
+
+    inputFoto.addEventListener("change", () => {
+      const file = inputFoto.files[0];
+
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      }
+    });
+
+  </script>
+
+</body>
+</html>
