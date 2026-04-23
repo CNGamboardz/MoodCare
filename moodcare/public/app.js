@@ -115,15 +115,16 @@ async function enviarMensaje() {
   const mensaje = input.value.trim();
   if (!mensaje) return;
 
-const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
-if (!user || !user.id) {
-  alert("Sesión inválida, vuelve a iniciar sesión");
-  window.location.href = "login.html";
-  return;
-}
+  if (!user || !user.id) {
+    alert("Sesión inválida");
+    window.location.href = "login.html";
+    return;
+  }
 
-  console.log("USER ID:", user.id); // 🔍 DEBUG
+  // 🧠 obtener id de conversación actual
+  let idConversacion = localStorage.getItem("chatId");
 
   main.classList.add("chat-activo");
   chatContainer.classList.add("active");
@@ -149,15 +150,17 @@ if (!user || !user.id) {
       },
       body: JSON.stringify({
         mensaje,
-        userId: user.id   // 🔥 SIN OPCIONAL
+        userId: user.id,
+        idConversacion
       })
     });
 
     const data = await res.json();
 
-    const typingDiv = document.getElementById(typingId);
-    if (!typingDiv) return;
+    // 🔥 guardar conversación actual
+    localStorage.setItem("chatId", data.idConversacion);
 
+    const typingDiv = document.getElementById(typingId);
     typingDiv.innerHTML = "";
 
     escribirTexto(typingDiv, data.respuesta);
@@ -169,8 +172,7 @@ if (!user || !user.id) {
     }
 
   } catch (error) {
-    console.error("Error:", error);
-    chat.innerHTML += `<div class="msg-bot">Error al conectar 😢</div>`;
+    chat.innerHTML += `<div class="msg-bot">Error 😢</div>`;
   }
 
   chat.scrollTop = chat.scrollHeight;
@@ -390,4 +392,9 @@ function cargarRecomendaciones() {
       </div>
     `;
   });
+}
+
+function nuevoChat() {
+  localStorage.removeItem("chatId"); // 🔥 borra conversación actual
+  document.getElementById("chat").innerHTML = ""; // limpia UI
 }

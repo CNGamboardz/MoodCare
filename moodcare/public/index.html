@@ -19,29 +19,29 @@
 
     <nav>
       <div class="menu-item" onclick="window.location.href='inicio.html'">
-        <img src="image/casa.png" alt="">
+        <img src="image/casa.png">
         <span>Inicio</span>
       </div>
 
       <div class="menu-item active">
-        <img src="image/chat.png" alt="">
+        <img src="image/chat.png">
         <span>Chat</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='registro.html'">
-        <img src="image/registroemocional.png" alt="">
+        <img src="image/registroemocional.png">
         <span>Registro emocional</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='historial.html'">
-        <img src="image/historial.png" alt="">
+        <img src="image/historial.png">
         <span>Historial</span>
       </div>
     </nav>
 
     <!-- 👤 USUARIO -->
     <div class="user-box">
-      <img id="fotoPerfil" src="image/user.jpg" alt="user">
+      <img id="fotoPerfil" src="image/user.jpg">
       <div>
         <b id="nombreUser">Tu Nombre</b><br>
         <small id="correoUser">tu@email.com</small>
@@ -56,6 +56,11 @@
   <!-- MAIN -->
   <main class="main" id="mainChat">
 
+    <!-- 🔥 BOTÓN NUEVO CHAT -->
+    <div class="top-bar">
+      <button class="btn-new-chat" onclick="nuevoChat()">＋ Nuevo chat</button>
+    </div>
+
     <div class="chat-center" id="chatUI">
 
       <h1><b>MoodCare</b> Assistant</h1>
@@ -63,7 +68,11 @@
 
       <!-- INPUT -->
       <div class="input-wrapper">
-        <input id="mensaje" placeholder="Escribe cómo te sientes..." />
+        <input 
+          id="mensaje" 
+          placeholder="Escribe cómo te sientes..." 
+          onkeypress="if(event.key === 'Enter'){ enviarMensaje(); }"
+        />
 
         <div class="input-actions">
           <button id="btnMic" onclick="toggleMic()">

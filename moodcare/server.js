@@ -47,12 +47,16 @@ const pool = new Pool({
 app.post("/register", upload.single("foto"), async (req, res) => {
   const { nombre, correo, password, fecha_nacimiento, telefono } = req.body;
 
-  try {
-    const hash = await bcrypt.hash(password, 10);
+  const client = await pool.connect();
 
+  try {
+    await client.query("BEGIN");
+
+    const hash = await bcrypt.hash(password, 10);
     const foto = req.file ? req.file.filename : null;
 
-    const result = await pool.query(
+    // 1️⃣ Crear usuario
+    const result = await client.query(
       `INSERT INTO usuarios 
       (nombre, correo, password_hash, fecha_nacimiento, telefono, foto_perfil)
       VALUES ($1, $2, $3, $4, $5, $6)
@@ -62,24 +66,33 @@ app.post("/register", upload.single("foto"), async (req, res) => {
 
     const userId = result.rows[0].id_usuario;
 
-    // 🎭 asignar rol "usuario"
-    const rol = await pool.query(
+    // 2️⃣ Obtener rol "usuario"
+    const rol = await client.query(
       `SELECT id_rol FROM roles WHERE nombre = 'usuario' LIMIT 1`
     );
 
-    if (rol.rows.length > 0) {
-      await pool.query(
-        `INSERT INTO usuarios_roles (id_usuario, id_rol)
-         VALUES ($1, $2)`,
-        [userId, rol.rows[0].id_rol]
-      );
+    if (rol.rows.length === 0) {
+      throw new Error("No existe el rol usuario");
     }
+
+    // 3️⃣ Asignar rol
+    await client.query(
+      `INSERT INTO usuarios_roles (id_usuario, id_rol)
+       VALUES ($1, $2)`,
+      [userId, rol.rows[0].id_rol]
+    );
+
+    await client.query("COMMIT");
 
     res.json({ ok: true });
 
   } catch (error) {
+    await client.query("ROLLBACK");
     console.error(error);
     res.status(500).json({ ok: false });
+
+  } finally {
+    client.release();
   }
 });
 
