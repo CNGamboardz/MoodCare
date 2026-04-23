@@ -130,11 +130,33 @@ app.post("/chat", async (req, res) => {
   const { mensaje, userId } = req.body;
 
   try {
+    console.log("👤 USER:", userId);
+    console.log("💬 MENSAJE:", mensaje);
 
-    console.log("USER:", userId);
-    console.log("MENSAJE:", mensaje);
+    // 🔴 VALIDAR USER ID
+    if (!userId) {
+      return res.status(400).json({
+        respuesta: "No se recibió userId ❌"
+      });
+    }
 
-    // 🔎 obtener emisores reales
+    // 🔎 VERIFICAR SI EL USUARIO EXISTE
+    const userCheck = await pool.query(
+      `SELECT id_usuario FROM usuarios WHERE id_usuario = $1`,
+      [userId]
+    );
+
+    if (userCheck.rows.length === 0) {
+      console.log("❌ USER NO EXISTE EN DB");
+
+      return res.status(400).json({
+        respuesta: "El usuario no existe en la base de datos ❌"
+      });
+    }
+
+    console.log("✅ USER EXISTE");
+
+    // 🔎 EMISORES
     const emisorUsuario = await pool.query(
       `SELECT id_emisor FROM cat_emisores_mensaje WHERE codigo = 'usuario'`
     );
@@ -146,7 +168,7 @@ app.post("/chat", async (req, res) => {
     const idUsuarioEmisor = emisorUsuario.rows[0].id_emisor;
     const idIAEmisor = emisorIA.rows[0].id_emisor;
 
-    // 🔎 obtener o crear conversación
+    // 🔎 CONVERSACIÓN
     let conv = await pool.query(
       `SELECT id_conversacion 
        FROM conversaciones 
@@ -158,24 +180,55 @@ app.post("/chat", async (req, res) => {
     let idConversacion;
 
     if (conv.rows.length === 0) {
+      console.log("🆕 CREANDO CONVERSACIÓN");
+
       const nueva = await pool.query(
         `INSERT INTO conversaciones (id_usuario)
          VALUES ($1) RETURNING id_conversacion`,
         [userId]
       );
+
       idConversacion = nueva.rows[0].id_conversacion;
     } else {
       idConversacion = conv.rows[0].id_conversacion;
     }
 
-    // 💾 guardar mensaje usuario
+    // 💾 MENSAJE USUARIO
     await pool.query(
       `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
        VALUES ($1, $2, $3)`,
       [idConversacion, idUsuarioEmisor, mensaje]
     );
 
-    // 📥 obtener historial real
+    console.log("✅ MENSAJE USUARIO GUARDADO");
+
+    // =========================
+    // 🧠 DETECTAR EMOCIÓN
+    // =========================
+    const emocion = detectarEmocion(mensaje);
+
+    console.log("🧠 EMOCIÓN DETECTADA:", emocion);
+
+    // =========================
+    // 💾 GUARDAR EMOCIÓN (AQUÍ ESTABA TU FALLO)
+    // =========================
+    try {
+      const result = await pool.query(
+        `INSERT INTO registros_estado_animo 
+        (id_usuario, puntuacion, etiqueta, nota)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *`,
+        [userId, emocion.puntuacion, emocion.etiqueta, mensaje]
+      );
+
+      console.log("✅ EMOCIÓN GUARDADA:", result.rows[0]);
+
+    } catch (err) {
+      console.error("💥 ERROR GUARDANDO EMOCIÓN:");
+      console.error(err);
+    }
+
+    // 📥 HISTORIAL
     const historialDB = await pool.query(
       `SELECT contenido, id_emisor 
        FROM mensajes 
@@ -190,21 +243,16 @@ app.post("/chat", async (req, res) => {
       )
       .join("\n");
 
-    // 🤖 IA con contexto REAL
+    // 🤖 IA
     const response = await axios.post("http://localhost:11434/api/generate", {
       model: "llama3",
       prompt: `
 Eres MoodCare, un asistente emocional con memoria real.
 
-- Recuerda TODO lo que el usuario dijo
-- NO ignores mensajes anteriores
-- NO repitas preguntas
-- Si el usuario ya respondió algo, NO vuelvas a preguntarlo
-
 Conversación:
 ${historialTexto}
 
-Responde al último mensaje con coherencia emocional.
+Responde al último mensaje.
 Asistente:
       `,
       stream: false
@@ -212,20 +260,39 @@ Asistente:
 
     const respuestaIA = response.data.response;
 
-    // 💾 guardar respuesta IA
+    // 💾 RESPUESTA IA
     await pool.query(
       `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
        VALUES ($1, $2, $3)`,
       [idConversacion, idIAEmisor, respuestaIA]
     );
 
+    console.log("🤖 RESPUESTA IA GUARDADA");
+
     res.json({ respuesta: respuestaIA });
 
   } catch (error) {
-    console.error("ERROR COMPLETO:", error);
-    res.status(500).json({ error: "Error IA" });
+    console.error("💥 ERROR COMPLETO:", error);
+
+    res.status(500).json({
+      respuesta: "Error interno 😢"
+    });
   }
 });
+
+
+// =========================
+// 🧠 FUNCIÓN EMOCIÓN
+// =========================
+function detectarEmocion(texto) {
+  texto = texto.toLowerCase();
+
+  if (texto.includes("feliz")) return { etiqueta: "feliz", puntuacion: 8 };
+  if (texto.includes("triste")) return { etiqueta: "triste", puntuacion: 3 };
+  if (texto.includes("ansiedad")) return { etiqueta: "ansiedad", puntuacion: 4 };
+
+  return { etiqueta: "neutral", puntuacion: 6 };
+}
 
 // =========================
 // 🚀 SERVIDOR
