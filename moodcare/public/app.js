@@ -115,10 +115,19 @@ async function enviarMensaje() {
   const mensaje = input.value.trim();
   if (!mensaje) return;
 
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user || !user.id) {
+  alert("Sesión inválida, vuelve a iniciar sesión");
+  window.location.href = "login.html";
+  return;
+}
+
+  console.log("USER ID:", user.id); // 🔍 DEBUG
+
   main.classList.add("chat-activo");
   chatContainer.classList.add("active");
 
-  // Usuario
   chat.innerHTML += `<div class="msg-user">${mensaje}</div>`;
   input.value = "";
 
@@ -135,24 +144,33 @@ async function enviarMensaje() {
   try {
     const res = await fetch("/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mensaje })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mensaje,
+        userId: user.id   // 🔥 SIN OPCIONAL
+      })
     });
 
     const data = await res.json();
 
     const typingDiv = document.getElementById(typingId);
+    if (!typingDiv) return;
+
     typingDiv.innerHTML = "";
 
     escribirTexto(typingDiv, data.respuesta);
 
-    // 🔊 AQUÍ ESTÁ LA MAGIA
     if (vozActiva) {
-      hablar(data.respuesta);
+      setTimeout(() => {
+        hablar(data.respuesta);
+      }, data.respuesta.length * 20);
     }
 
   } catch (error) {
-    chat.innerHTML += `<div class="msg-bot">Error al conectar</div>`;
+    console.error("Error:", error);
+    chat.innerHTML += `<div class="msg-bot">Error al conectar 😢</div>`;
   }
 
   chat.scrollTop = chat.scrollHeight;

@@ -1,4 +1,5 @@
 const express = require("express");
+const conversaciones = {};
 const axios = require("axios");
 const path = require("path");
 const bcrypt = require("bcrypt");
@@ -126,34 +127,172 @@ app.post("/login", async (req, res) => {
 // 🤖 IA (OLLAMA)
 // =========================
 app.post("/chat", async (req, res) => {
-  const mensaje = req.body.mensaje;
+  const { mensaje, userId } = req.body;
 
   try {
+    console.log("👤 USER:", userId);
+    console.log("💬 MENSAJE:", mensaje);
+
+    // 🔴 VALIDAR USER ID
+    if (!userId) {
+      return res.status(400).json({
+        respuesta: "No se recibió userId ❌"
+      });
+    }
+
+    // 🔎 VERIFICAR SI EL USUARIO EXISTE
+    const userCheck = await pool.query(
+      `SELECT id_usuario FROM usuarios WHERE id_usuario = $1`,
+      [userId]
+    );
+
+    if (userCheck.rows.length === 0) {
+      console.log("❌ USER NO EXISTE EN DB");
+
+      return res.status(400).json({
+        respuesta: "El usuario no existe en la base de datos ❌"
+      });
+    }
+
+    console.log("✅ USER EXISTE");
+
+    // 🔎 EMISORES
+    const emisorUsuario = await pool.query(
+      `SELECT id_emisor FROM cat_emisores_mensaje WHERE codigo = 'usuario'`
+    );
+
+    const emisorIA = await pool.query(
+      `SELECT id_emisor FROM cat_emisores_mensaje WHERE codigo = 'asistente'`
+    );
+
+    const idUsuarioEmisor = emisorUsuario.rows[0].id_emisor;
+    const idIAEmisor = emisorIA.rows[0].id_emisor;
+
+    // 🔎 CONVERSACIÓN
+    let conv = await pool.query(
+      `SELECT id_conversacion 
+       FROM conversaciones 
+       WHERE id_usuario = $1 
+       ORDER BY creado_en DESC LIMIT 1`,
+      [userId]
+    );
+
+    let idConversacion;
+
+    if (conv.rows.length === 0) {
+      console.log("🆕 CREANDO CONVERSACIÓN");
+
+      const nueva = await pool.query(
+        `INSERT INTO conversaciones (id_usuario)
+         VALUES ($1) RETURNING id_conversacion`,
+        [userId]
+      );
+
+      idConversacion = nueva.rows[0].id_conversacion;
+    } else {
+      idConversacion = conv.rows[0].id_conversacion;
+    }
+
+    // 💾 MENSAJE USUARIO
+    await pool.query(
+      `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
+       VALUES ($1, $2, $3)`,
+      [idConversacion, idUsuarioEmisor, mensaje]
+    );
+
+    console.log("✅ MENSAJE USUARIO GUARDADO");
+
+    // =========================
+    // 🧠 DETECTAR EMOCIÓN
+    // =========================
+    const emocion = detectarEmocion(mensaje);
+
+    console.log("🧠 EMOCIÓN DETECTADA:", emocion);
+
+    // =========================
+    // 💾 GUARDAR EMOCIÓN (AQUÍ ESTABA TU FALLO)
+    // =========================
+    try {
+      const result = await pool.query(
+        `INSERT INTO registros_estado_animo 
+        (id_usuario, puntuacion, etiqueta, nota)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *`,
+        [userId, emocion.puntuacion, emocion.etiqueta, mensaje]
+      );
+
+      console.log("✅ EMOCIÓN GUARDADA:", result.rows[0]);
+
+    } catch (err) {
+      console.error("💥 ERROR GUARDANDO EMOCIÓN:");
+      console.error(err);
+    }
+
+    // 📥 HISTORIAL
+    const historialDB = await pool.query(
+      `SELECT contenido, id_emisor 
+       FROM mensajes 
+       WHERE id_conversacion = $1
+       ORDER BY creado_en ASC`,
+      [idConversacion]
+    );
+
+    const historialTexto = historialDB.rows
+      .map(m =>
+        `${m.id_emisor === idUsuarioEmisor ? "Usuario" : "Asistente"}: ${m.contenido}`
+      )
+      .join("\n");
+
+    // 🤖 IA
     const response = await axios.post("http://localhost:11434/api/generate", {
       model: "llama3",
       prompt: `
-Eres MoodCare, un asistente emocional.
+Eres MoodCare, un asistente emocional con memoria real.
 
-- Eres empático
-- No juzgas
-- Ayudas al usuario
-- No das consejos médicos
-- Respondes claro y corto
+Conversación:
+${historialTexto}
 
-Usuario: ${mensaje}
+Responde al último mensaje.
+Asistente:
       `,
       stream: false
     });
 
-    res.json({
-      respuesta: response.data.response
-    });
+    const respuestaIA = response.data.response;
+
+    // 💾 RESPUESTA IA
+    await pool.query(
+      `INSERT INTO mensajes (id_conversacion, id_emisor, contenido)
+       VALUES ($1, $2, $3)`,
+      [idConversacion, idIAEmisor, respuestaIA]
+    );
+
+    console.log("🤖 RESPUESTA IA GUARDADA");
+
+    res.json({ respuesta: respuestaIA });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error con IA" });
+    console.error("💥 ERROR COMPLETO:", error);
+
+    res.status(500).json({
+      respuesta: "Error interno 😢"
+    });
   }
 });
+
+
+// =========================
+// 🧠 FUNCIÓN EMOCIÓN
+// =========================
+function detectarEmocion(texto) {
+  texto = texto.toLowerCase();
+
+  if (texto.includes("feliz")) return { etiqueta: "feliz", puntuacion: 8 };
+  if (texto.includes("triste")) return { etiqueta: "triste", puntuacion: 3 };
+  if (texto.includes("ansiedad")) return { etiqueta: "ansiedad", puntuacion: 4 };
+
+  return { etiqueta: "neutral", puntuacion: 6 };
+}
 
 // =========================
 // 🚀 SERVIDOR
