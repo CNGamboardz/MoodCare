@@ -49,19 +49,19 @@
 
     <!-- LOGOUT -->
     <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
-
   </aside>
 
   <!-- MAIN -->
   <main class="main">
 
     <!-- SALUDO -->
-      <div class="header-dashboard">
+    <div class="header-dashboard">
       <h1 id="saludo"></h1>
       <p class="segundosaludo">
         Bienvenida a MoodCare, aquí tienes un resumen de tu estado emocional
       </p>
-     </div>
+    </div>
+
     <!-- DASHBOARD -->
     <div class="dashboard">
 
@@ -69,10 +69,41 @@
       <div class="card big">
         <h3>Estado emocional de hoy</h3>
 
-        <div class="grafico">
-          <div class="circle grande">80%<br><small>Energía</small></div>
-          <div class="circle medio">20%<br><small>Ansiedad</small></div>
-          <div class="circle pequeño">10%<br><small>Triste</small></div>
+        <div class="grafico grafico-estado">
+
+          <!-- CÍRCULOS -->
+          <div class="circle estado-circulo energia" id="energia">
+            0%<br><small>Energía emocional</small>
+          </div>
+
+          <div class="circle estado-circulo ansiedad" id="ansiedad">
+            0%<br><small>Ansiedad</small>
+          </div>
+
+          <div class="circle estado-circulo triste" id="triste">
+            0%<br><small>Bajo ánimo</small>
+          </div>
+
+          <!-- BARRAS -->
+          <div class="leyenda-estado">
+            
+            <div class="item-leyenda">
+              <div class="barra energia-bar"></div>
+              <span>Energía emocional</span>
+            </div>
+
+            <div class="item-leyenda">
+              <div class="barra ansiedad-bar"></div>
+              <span>Ansiedad</span>
+            </div>
+
+            <div class="item-leyenda">
+              <div class="barra triste-bar"></div>
+              <span>Triste</span>
+            </div>
+
+          </div>
+
         </div>
       </div>
 
@@ -80,29 +111,26 @@
       <div class="card calendario-card">
         <span>Registro Emocional Mensual</span>
         <p></p>
+
         <div class="cal-header">
           <button onclick="cambiarMes(-1)">◀</button>
           <span id="mesActual">Mes</span>
           <button onclick="cambiarMes(1)">▶</button>
         </div>
 
-        <!-- DÍAS -->
         <div class="cal-grid dias">
           <div>D</div><div>L</div><div>M</div><div>M</div>
           <div>J</div><div>V</div><div>S</div>
         </div>
 
-        <!-- FECHAS -->
         <div class="cal-grid fechas" id="calendario"></div>
 
-        <!-- LEYENDA -->
         <div class="cal-legend">
           <div><span class="dot feliz"></span> Feliz</div>
           <div><span class="dot neutral"></span> Neutral</div>
           <div><span class="dot ansiedad"></span> Ansiedad</div>
           <div><span class="dot triste"></span> Triste</div>
         </div>
-
       </div>
 
       <!-- EMOCIONES -->
@@ -115,13 +143,11 @@
 
       <!-- RECOMENDACIONES -->
       <div class="card">
-      <h3>Recomendaciones de bienestar</h3>
+        <h3>Recomendaciones de bienestar</h3>
+        <div id="recomendaciones"></div>
+      </div>
 
-      <div id="recomendaciones"></div>
     </div>
-
-    </div>
-
   </main>
 
   <script src="app.js"></script>

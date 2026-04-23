@@ -17,28 +17,24 @@
 
     <nav>
       <div class="menu-item" onclick="window.location.href='inicio.html'">
-        <img src="image/casa.png" alt="">
-        <span>Inicio</span>
+        <img src="image/casa.png"><span>Inicio</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='index.html'">
-        <img src="image/chat.png" alt="">
-        <span>Chat</span>
+        <img src="image/chat.png"><span>Chat</span>
       </div>
 
       <div class="menu-item active">
-        <img src="image/registroemocional.png" alt="">
-        <span>Registro emocional</span>
+        <img src="image/registroemocional.png"><span>Registro emocional</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='historial.html'">
-        <img src="image/historial.png" alt="">
-        <span>Historial</span>
+        <img src="image/historial.png"><span>Historial</span>
       </div>
     </nav>
 
     <div class="user-box">
-      <img src="image/user.jpg" alt="user">
+      <img src="image/user.jpg">
       <div>
         <b>Tu Nombre</b><br>
         <small>tu@email.com</small>
@@ -46,20 +42,57 @@
     </div>
   </aside>
 
-  <main class="main">
-    <h1>Registro emocional</h1>
-    <p>Registra cómo te sientes hoy:</p>
+<main class="main">
 
-    <div class="card">
-      <label>¿Cómo te sientes?</label>
-      <input type="text" placeholder="Ej: Feliz, triste, ansioso...">
+  <h1>Registro emocional</h1>
 
-      <label>Puntuación (1-10)</label>
-      <input type="number" min="1" max="10">
+  <!-- CARDS -->
+  <div class="top-cards">
 
-      <button class="btn-primary">Guardar</button>
+    <div class="card estado">
+      <p>Estado emocional de hoy</p>
+      <div class="estado-content">
+        <span class="emoji">😊</span>
+        <h2>Feliz</h2>
+      </div>
     </div>
-  </main>
+
+    <div class="card mini">
+      <p>Puntuación emocional</p>
+      <h2>8/10</h2>
+    </div>
+
+    <div class="card mini">
+      <p>Registros por semana</p>
+      <h2>5</h2>
+    </div>
+
+    <div class="card mini">
+      <p>Último registro</p>
+      <h2>Hace 3 horas</h2>
+    </div>
+
+  </div>
+
+  <!-- FORM -->
+  <div class="card form-card">
+
+    <h3>Nuevo registro</h3>
+
+    <label>¿Cómo te sientes?</label>
+    <textarea placeholder="Ej: Feliz, triste, ansioso..."></textarea>
+
+    <label>Puntuación (1-10)</label>
+    <input type="number" min="1" max="10">
+
+    <label>Nota (opcional)</label>
+    <textarea placeholder="Escribe algo sobre tu día..."></textarea>
+
+    <button class="btn-primary">Guardar</button>
+
+  </div>
+
+</main>
 
 </body>
 </html>

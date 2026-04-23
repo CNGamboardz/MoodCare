@@ -251,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
   activarEnter();
   renderCalendario();
   cargarRecomendaciones();
+  cargarEstadoEmocional();
 });
 
 /* ========================= */
@@ -397,4 +398,48 @@ function cargarRecomendaciones() {
 function nuevoChat() {
   localStorage.removeItem("chatId"); // 🔥 borra conversación actual
   document.getElementById("chat").innerHTML = ""; // limpia UI
+}
+
+/* ========================= */
+/* 📊 CARGAR ESTADO EMOCIONAL */
+/* ========================= */
+async function cargarEstadoEmocional() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+
+  try {
+    const res = await fetch(`/estado-hoy/${user.id}`);
+    const data = await res.json();
+
+    const energia = document.getElementById("energia");
+    const ansiedad = document.getElementById("ansiedad");
+    const triste = document.getElementById("triste");
+
+    // 🌿 Energía
+    if (energia) {
+      const val = Math.round(data.energia);
+      energia.innerHTML = `${val}%<br><small>Energía</small>`;
+      energia.style.width = (100 + val) + "px";
+      energia.style.height = (100 + val) + "px";
+    }
+
+    // ⚡ Ansiedad
+    if (ansiedad) {
+      const val = Math.round(data.ansiedad);
+      ansiedad.innerHTML = `${val}%<br><small>Ansiedad</small>`;
+      ansiedad.style.width = (70 + val) + "px";
+      ansiedad.style.height = (70 + val) + "px";
+    }
+
+    // 🌧️ Bajo ánimo
+    if (triste) {
+      const val = Math.round(data.triste);
+      triste.innerHTML = `${val}%<br><small>Bajo ánimo</small>`;
+      triste.style.width = (60 + val) + "px";
+      triste.style.height = (60 + val) + "px";
+    }
+
+  } catch (error) {
+    console.error("Error cargando estado emocional", error);
+  }
 }

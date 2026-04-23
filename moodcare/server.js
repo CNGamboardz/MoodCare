@@ -260,13 +260,46 @@ app.post("/chat", async (req, res) => {
     const response = await axios.post("http://localhost:11434/api/generate", {
       model: "llama3",
       prompt: `
-Eres MoodCare, un asistente emocional con memoria real.
+      Sistema:
+      Eres MoodCare, un asistente emocional humano.
 
-Conversación:
-${historialTexto}
+      Reglas OBLIGATORIAS:
+      - Responde como una persona real (no robot)
+      - Máximo 2–3 líneas
+      - NO repitas frases típicas como "no te juzgo"
+      - NO ignores el historial
+      - NO hagas preguntas si no aportan
+      - Mantén coherencia con lo que el usuario ya dijo
 
-Responde al último mensaje.
-Asistente:
+      Comportamiento:
+      1. Detecta la emoción
+      2. Valida de forma natural (sin exagerar)
+      3. Responde como alguien cercano
+      4. Opcional: una pregunta corta si tiene sentido
+
+      IMPORTANTE:
+      - Si es saludo → responde saludo simple
+      - Si el usuario ya explicó algo → NO lo repitas ni lo preguntes otra vez
+
+      Ejemplos:
+
+      Usuario: Hola
+      Asistente: Hola 😊 ¿cómo estás?
+
+      Usuario: Estoy triste
+      Asistente: Suena pesado… a veces esos días llegan sin avisar. ¿Te pasó algo en particular?
+
+      Usuario: Ya te dije que fue por la escuela
+      Asistente: Ah, entonces sí te pegó fuerte eso… la escuela a veces cansa más de lo que parece.
+
+      ---
+
+      Conversación:
+      ${historialTexto}
+
+      Usuario: ${mensaje}
+
+      Asistente:
       `,
       stream: false
     });
@@ -303,9 +336,91 @@ function detectarEmocion(texto) {
   if (texto.includes("feliz")) return { etiqueta: "feliz", puntuacion: 8 };
   if (texto.includes("triste")) return { etiqueta: "triste", puntuacion: 3 };
   if (texto.includes("ansiedad")) return { etiqueta: "ansiedad", puntuacion: 4 };
+  if (texto.includes("enojado")) return { etiqueta: "enojado", puntuacion: 2 };
+  if (texto.includes("estresado")) return { etiqueta: "estresado", puntuacion: 3 };
+  if (texto.includes("cansado")) return { etiqueta: "cansado", puntuacion: 4 };
+  if  (texto.includes("aburrido")) return { etiqueta: "aburrido", puntuacion: 5 };
+  if (texto.includes("relajado")) return { etiqueta: "relajado", puntuacion: 7 };
+  if  (texto.includes("solo")) return { etiqueta: "solo", puntuacion: 3 };
+  if (texto.includes("conectado")) return { etiqueta: "conectado", puntuacion: 7 };
 
   return { etiqueta: "neutral", puntuacion: 6 };
 }
+
+// =========================
+// 📊 ESTADO EMOCIONAL DEBUG
+// =========================
+app.get("/estado-hoy/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  console.log("👤 USER ID RECIBIDO:", userId);
+
+  try {
+
+    // 🔍 VER TODO SIN FILTRO
+    const debugAll = await pool.query(`
+      SELECT id_usuario, etiqueta, creado_en
+      FROM registros_estado_animo
+      ORDER BY creado_en DESC
+      LIMIT 5
+    `);
+
+    console.log("🧾 ÚLTIMOS REGISTROS:", debugAll.rows);
+
+    // 🔍 CONSULTA REAL
+    const result = await pool.query(`
+      SELECT etiqueta, COUNT(*) as total
+      FROM registros_estado_animo
+      WHERE id_usuario = $1
+      AND creado_en >= NOW() - INTERVAL '1 day'
+      GROUP BY etiqueta
+    `, [userId]);
+
+    console.log("RESULTADO FILTRADO:", result.rows);
+
+    let total = 0;
+    result.rows.forEach(r => total += parseInt(r.total));
+
+    if (total === 0) {
+      console.log("⚠️ NO HAY DATOS PARA ESTE USUARIO");
+      return res.json({
+        energia: 0,
+        ansiedad: 0,
+        triste: 0
+      });
+    }
+
+    const data = {
+      energia: 0,
+      ansiedad: 0,
+      triste: 0
+    };
+
+    result.rows.forEach(r => {
+      const porcentaje = (parseInt(r.total) / total) * 100;
+
+      if (["feliz", "relajado", "conectado", "neutral"].includes(r.etiqueta)) {
+        data.energia += porcentaje;
+      }
+
+      if (["ansioso", "estresado", "neutral"].includes(r.etiqueta)) {
+        data.ansiedad += porcentaje;
+      }
+
+      if (["triste", "enojado", "cansado", "aburrido", "solo"].includes(r.etiqueta)) {
+        data.triste += porcentaje;
+      }
+    });
+
+    console.log("✅ DATA FINAL:", data);
+
+    res.json(data);
+
+  } catch (error) {
+    console.error("💥 ERROR:", error);
+    res.status(500).json({ error: "Error obteniendo datos" });
+  }
+});
 
 // =========================
 // 🚀 SERVIDOR
