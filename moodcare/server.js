@@ -428,3 +428,41 @@ app.get("/estado-hoy/:userId", async (req, res) => {
 app.listen(3000, () => {
   console.log("Servidor en http://localhost:3000");
 });
+
+
+
+
+
+
+
+
+
+app.get("/api/dashboard/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 🔥 TODOS LOS REGISTROS DEL USUARIO
+    const registros = await pool.query(`
+      SELECT *
+      FROM registros_estado_animo
+      WHERE id_usuario = $1
+      ORDER BY creado_en DESC
+    `, [id]);
+
+    // 🔥 ÚLTIMO REGISTRO
+    const ultimo = registros.rows[0] || null;
+
+    // 🔥 TOTAL
+    const total = registros.rows.length;
+
+    res.json({
+      registros: registros.rows,
+      ultimo,
+      total
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en dashboard" });
+  }
+});

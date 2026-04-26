@@ -443,3 +443,262 @@ async function cargarEstadoEmocional() {
     console.error("Error cargando estado emocional", error);
   }
 }
+
+
+
+
+
+
+
+
+const API = "http://localhost:3000/api/dashboard";
+
+const user = JSON.parse(localStorage.getItem("user"));
+const ID_USUARIO = user?.id;
+
+// 🔥 PRUEBA RÁPIDA (si falla login)
+if (!ID_USUARIO) {
+  console.warn("No hay usuario, usando ID fijo");
+}
+
+window.onload = async () => {
+  try {
+
+    const res = await fetch(`${API}/${ID_USUARIO}`);
+    const data = await res.json();
+
+    console.log("DATA:", data);
+
+    renderDashboard(data);
+
+  } catch (error) {
+    console.error("ERROR:", error);
+    mostrarVacio();
+    pintarCalendario([]);
+  }
+};
+
+/* =========================
+   RENDER
+========================= */
+function renderDashboard(data) {
+
+  if (!data || !data.registros || data.registros.length === 0) {
+    mostrarVacio();
+    pintarCalendario([]);
+    return;
+  }
+
+  const { registros, ultimo, total } = data;
+
+  actualizarCards(ultimo, total);
+  pintarTabla(registros);
+  pintarCalendario(registros);
+  pintarGrafica(registros);
+}
+
+/* =========================
+   CARDS
+========================= */
+function actualizarCards(ultimo, total) {
+
+  document.getElementById("estadoHoy").innerText =
+    `${emoji(ultimo.etiqueta)} ${ultimo.etiqueta}`;
+
+  document.getElementById("puntuacionHoy").innerText =
+    `${ultimo.puntuacion}/10`;
+
+  document.getElementById("totalRegistros").innerText =
+    `${total} registros`;
+
+  document.getElementById("ultimoRegistro").innerText =
+    tiempoRelativo(ultimo.creado_en);
+}
+
+/* =========================
+   TABLA
+========================= */
+function pintarTabla(data) {
+
+  let html = `
+    <tr>
+      <th>Fecha</th>
+      <th>Emoción</th>
+      <th>Puntuación</th>
+      <th>Nota</th>
+    </tr>
+  `;
+
+  data.slice(0,3).forEach(r => {
+    html += `
+      <tr>
+        <td>${formatoFecha(r.creado_en)}</td>
+        <td>${emoji(r.etiqueta)} ${r.etiqueta}</td>
+        <td>
+          <div style="
+            background:#e7a27c;
+            padding:5px 10px;
+            border-radius:20px;
+            width:${r.puntuacion * 10}px;
+            text-align:center;
+          ">
+            ${r.puntuacion}
+          </div>
+        </td>
+        <td>${r.nota || "-"}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("tablaRegistros").innerHTML = html;
+}
+
+/* =========================
+   CALENDARIO
+========================= */
+function pintarCalendario(data) {
+
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const hoy = new Date();
+  const mes = hoy.getMonth();
+  const año = hoy.getFullYear();
+
+  // 🔹 primer día del mes
+  const primerDia = new Date(año, mes, 1).getDay();
+
+  // 🔹 total días del mes
+  const diasMes = new Date(año, mes + 1, 0).getDate();
+
+  // 🔹 mapa de emociones por día
+  const mapa = {};
+
+  data.forEach(r => {
+    const fecha = new Date(r.creado_en);
+
+    if (fecha.getMonth() === mes && fecha.getFullYear() === año) {
+      mapa[fecha.getDate()] = r.etiqueta;
+    }
+  });
+
+  // 🔹 espacios vacíos (alineación correcta)
+  for (let i = 0; i < primerDia; i++) {
+    const vacio = document.createElement("div");
+    calendar.appendChild(vacio);
+  }
+
+  // 🔹 días reales
+  for (let d = 1; d <= diasMes; d++) {
+
+    const div = document.createElement("div");
+    div.className = "dia";
+    div.innerText = d;
+
+    if (mapa[d]) {
+      div.style.background = getColor(mapa[d]);
+      div.style.color = "white";
+    }
+
+    calendar.appendChild(div);
+  }
+}
+/* =========================
+   GRAFICA
+========================= */
+function pintarGrafica(data) {
+
+  const ultimos = data.slice(0,7).reverse();
+
+  const ctx = document.getElementById("grafica");
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ultimos.map(() => ""),
+      datasets: [{
+        data: ultimos.map(r => r.puntuacion),
+        tension: 0.4,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 1, max: 10 } }
+    },
+    plugins: [{
+      id: "emojiPlugin",
+      afterDraw(chart) {
+
+        const { ctx } = chart;
+
+        chart.data.datasets[0].data.forEach((value, i) => {
+
+          const meta = chart.getDatasetMeta(0);
+          const x = meta.data[i].x;
+          const y = meta.data[i].y;
+
+          const emo = ultimos[i].etiqueta;
+
+          ctx.font = "20px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(emoji(emo), x, y - 10);
+        });
+      }
+    }]
+  });
+}
+
+/* =========================
+   VACÍO
+========================= */
+function mostrarVacio() {
+
+  document.getElementById("estadoHoy").innerText = "--";
+  document.getElementById("puntuacionHoy").innerText = "--";
+  document.getElementById("totalRegistros").innerText = "--";
+  document.getElementById("ultimoRegistro").innerText = "--";
+
+  document.getElementById("tablaRegistros").innerHTML = `
+    <tr>
+      <td colspan="4" style="text-align:center;">
+        No hay registros 💭
+      </td>
+    </tr>
+  `;
+}
+
+/* =========================
+   HELPERS
+========================= */
+function emoji(e) {
+  if (!e) return "😐";
+  e = e.toLowerCase();
+  if (e.includes("feliz")) return "😃";
+  if (e.includes("triste")) return "😢";
+  if (e.includes("ansioso")) return "😟";
+  return "😐";
+}
+
+function formatoFecha(f) {
+  return new Date(f).toLocaleDateString();
+}
+
+function tiempoRelativo(f) {
+  const diff = (new Date() - new Date(f)) / 1000;
+  if (diff < 3600) return "Hace minutos";
+  if (diff < 86400) return "Hace horas";
+  return formatoFecha(f);
+}
+
+function getColor(e) {
+
+  e = e.toLowerCase();
+
+  if (e.includes("feliz")) return "#E6A38B";
+  if (e.includes("ansiedad")) return "#D8CDB5";
+  if (e.includes("triste")) return "#8E8773";
+  if (e.includes("neutral")) return "#ccc";
+
+  return "#ddd";
+}

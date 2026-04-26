@@ -1542,3 +1542,206 @@ body.login-page {
   100% { transform: translateY(0px); }
 }
 
+
+/* ========================= */
+/* 💎 REGISTRO EMOCIONAL PRO */
+/* ========================= */
+
+.registro-body {
+  display: flex;
+  background: #f6f3ef;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* SIDEBAR */
+.registro-sidebar {
+  width: 220px;
+  background: #9c9277;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.registro-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.registro-logo img {
+  width: 40px;
+}
+
+.registro-menu {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.registro-menu:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.registro-menu.active {
+  background: white;
+  color: #9c9277;
+  font-weight: bold;
+}
+
+/* MAIN */
+.registro-main {
+  flex: 1;
+  padding: 30px;
+}
+
+.registro-title {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* CARDS */
+.registro-top {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.registro-card {
+  background: #ebe7e3;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.registro-card h2 {
+  margin-top: 10px;
+}
+
+/* GRID */
+.registro-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* BOX */
+.registro-box {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* TABLA */
+#tablaRegistros {
+  width: 100%;
+}
+
+#tablaRegistros td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* PILL */
+.pill {
+  background: #e6a57e;
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+}
+
+/* ========================= */
+/* 📅 CALENDARIO PRO REAL */
+/* ========================= */
+
+.registro-calendar-box {
+  background: #9c9277;
+  color: white;
+  padding: 20px;
+  border-radius: 25px;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* CELDA */
+.dia {
+  height: 38px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  background: rgba(255,255,255,0.15);
+  color: white;
+
+  transition: 0.2s;
+}
+
+/* HOVER */
+.dia:hover {
+  transform: scale(1.1);
+}
+
+/* ========================= */
+/* 🎨 COLORES EMOCIONES */
+/* ========================= */
+
+.feliz {
+  background: #f5b8a5 !important;
+  color: #000;
+}
+
+.neutral {
+  background: #f2c28b !important;
+  color: #000;
+}
+
+.ansiedad {
+  background: #e5e1d8 !important;
+  color: #333;
+}
+
+.triste {
+  background: #c9c4b8 !important;
+  color: #000;
+}
+
+/* ========================= */
+/* 📊 GRAFICA */
+/* ========================= */
+
+canvas {
+  margin-top: 10px;
+}
+
+/* ========================= */
+/* 🌿 RECOMENDACIONES */
+/* ========================= */
+
+.registro-reco {
+  margin-top: 20px;
+  background: #9c9277;
+  color: white;
+  padding: 20px;
+  border-radius: 25px;
+}
+
+.registro-reco p {
+  margin: 10px 0;
+}

@@ -2,97 +2,109 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodCare - Registro</title>
-  <link rel="stylesheet" href="./styles.css">
+  <title>Registro emocional</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 
-<body>
+<body class="registro-body">
 
-  <aside class="sidebar">
-    <h2>
-      <img src="image/logo.png" alt="logo">
-      MoodCare
-    </h2>
+<!-- SIDEBAR -->
+<aside class="registro-sidebar">
 
-    <nav>
-      <div class="menu-item" onclick="window.location.href='inicio.html'">
-        <img src="image/casa.png"><span>Inicio</span>
-      </div>
+  <h2 class="registro-logo">
+    <img src="./image/logo.png">
+    MoodCare
+  </h2>
 
-      <div class="menu-item" onclick="window.location.href='index.html'">
-        <img src="image/chat.png"><span>Chat</span>
-      </div>
-
-      <div class="menu-item active">
-        <img src="image/registroemocional.png"><span>Registro emocional</span>
-      </div>
-
-      <div class="menu-item" onclick="window.location.href='historial.html'">
-        <img src="image/historial.png"><span>Historial</span>
-      </div>
-    </nav>
-
-    <div class="user-box">
-      <img src="image/user.jpg">
-      <div>
-        <b>Tu Nombre</b><br>
-        <small>tu@email.com</small>
-      </div>
-    </div>
-  </aside>
-
-<main class="main">
-
-  <h1>Registro emocional</h1>
-
-  <!-- CARDS -->
-  <div class="top-cards">
-
-    <div class="card estado">
-      <p>Estado emocional de hoy</p>
-      <div class="estado-content">
-        <span class="emoji">😊</span>
-        <h2>Feliz</h2>
-      </div>
+  <nav>
+    <div class="registro-menu" onclick="location.href='inicio.html'">
+      <img src="./image/casa.png"> Inicio
     </div>
 
-    <div class="card mini">
-      <p>Puntuación emocional</p>
-      <h2>8/10</h2>
+    <div class="registro-menu" onclick="location.href='index.html'">
+      <img src="./image/chat.png"> Chat
     </div>
 
-    <div class="card mini">
-      <p>Registros por semana</p>
-      <h2>5</h2>
+    <div class="registro-menu active">
+      <img src="./image/registroemocional.png"> Registro emocional
     </div>
 
-    <div class="card mini">
-      <p>Último registro</p>
-      <h2>Hace 3 horas</h2>
+    <div class="registro-menu" onclick="location.href='historial.html'">
+      <img src="./image/historial.png"> Historial
+    </div>
+  </nav>
+
+</aside>
+
+<!-- MAIN -->
+<main class="registro-main">
+
+<h1 class="registro-title">Registro emocional</h1>
+
+<!-- CARDS -->
+<div class="registro-top">
+
+  <div class="registro-card">
+    <p>Estado emocional de hoy</p>
+    <h2 id="estadoHoy">--</h2>
+  </div>
+
+  <div class="registro-card">
+    <p>Puntuación emocional</p>
+    <h2 id="puntuacionHoy">--</h2>
+  </div>
+
+  <div class="registro-card">
+    <p>Registros por semana</p>
+    <h2 id="totalRegistros">--</h2>
+  </div>
+
+  <div class="registro-card">
+    <p>Último registro</p>
+    <h2 id="ultimoRegistro">--</h2>
+  </div>
+
+</div>
+
+<!-- GRID -->
+<div class="registro-grid">
+
+  <!-- IZQUIERDA -->
+  <div class="registro-left">
+
+    <div class="registro-box">
+      <h3>Últimos registros</h3>
+      <table id="tablaRegistros"></table>
+    </div>
+
+    <div class="registro-box">
+      <h3>Historial emocional semanal</h3>
+      <canvas id="grafica"></canvas>
     </div>
 
   </div>
 
-  <!-- FORM -->
-  <div class="card form-card">
+  <!-- DERECHA -->
+  <div class="registro-side">
 
-    <h3>Nuevo registro</h3>
+    <div class="registro-calendar-box">
+      <h3>Registro emocional mensual</h3>
+      <div id="calendar"></div>
+    </div>
 
-    <label>¿Cómo te sientes?</label>
-    <textarea placeholder="Ej: Feliz, triste, ansioso..."></textarea>
-
-    <label>Puntuación (1-10)</label>
-    <input type="number" min="1" max="10">
-
-    <label>Nota (opcional)</label>
-    <textarea placeholder="Escribe algo sobre tu día..."></textarea>
-
-    <button class="btn-primary">Guardar</button>
+    <div class="registro-reco">
+      <h4>Recomendaciones</h4>
+      <p>🧘 Respirar profundo 5 minutos</p>
+      <p>🚶 Caminar 10 minutos</p>
+    </div>
 
   </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
 
 </main>
-
 </body>
 </html>
