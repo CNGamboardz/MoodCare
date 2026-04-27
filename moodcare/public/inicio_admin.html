@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodCare</title>
+  <title>MoodCare | Inicio Admin</title>
 
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -12,6 +12,7 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
+
     <h2>
       <img src="image/logo.png" alt="logo">
       MoodCare
@@ -20,7 +21,7 @@
     <nav id="menu">
 
       <!-- 🏠 INICIO -->
-      <div class="menu-item" onclick="window.location.href='inicio_admin.html'">
+      <div class="menu-item active" onclick="window.location.href='inicio_admin.html'">
         <img src="image/casa.png">
         <span>Inicio</span>
       </div>
@@ -34,7 +35,7 @@
       <!-- 🧠 REGISTROS -->
       <div class="menu-item" onclick="window.location.href='registros_emocionales_admin.html'">
         <img src="image/registroemocional.png">
-        <span>Registros</span>
+        <span>Registros emocionales</span>
       </div>
 
       <!-- 📊 ESTADÍSTICAS -->
@@ -46,14 +47,15 @@
       <!-- 👑 ADMINS -->
       <div class="menu-item" onclick="window.location.href='registrar_admins.html'">
         <img src="image/admin.png">
-        <span>Admins</span>
+        <span>Administradores</span>
       </div>
 
     </nav>
 
     <!-- 👤 USUARIO -->
     <div class="user-box">
-      <img id="fotoPerfil" src="image/user.jpg">
+      <img id="fotoPerfil" src="image/user.jpg" alt="perfil">
+
       <div>
         <b id="nombreUser">Tu Nombre</b><br>
         <small id="correoUser">tu@email.com</small>
@@ -65,8 +67,195 @@
 
   </aside>
 
+  <!-- ================================================= -->
+  <!-- CONTENIDO SUPERIOR -->
+  <!-- ================================================= -->
+  <main class="inicio-admin">
+
+    <!-- HEADER -->
+    <section class="inicio-header">
+      <h1>Hola Admin</h1>
+      <p>Bienvenido al panel de administración, aquí tienes un resumen del sistema MoodCare</p>
+    </section>
+
+    <!-- TARJETAS -->
+    <section class="inicio-cards">
+
+      <!-- CARD 1 -->
+      <div class="inicio-card destacada">
+        <div class="card-icon">
+          <img src="image/user.png" alt="">
+        </div>
+
+        <div class="card-info">
+          <span class="card-title">Usuarios registrados</span>
+          <h2>120 <small>Usuarios</small></h2>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="inicio-card">
+        <div class="card-icon">
+          <img src="image/user.png" alt="">
+        </div>
+
+        <div class="card-info">
+          <span class="card-title">Usuarios activos</span>
+          <h2>85 <small>Hoy</small></h2>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="inicio-card">
+        <div class="card-icon">
+          <img src="image/registroemocional.png" alt="">
+        </div>
+
+        <div class="card-info">
+          <span class="card-title">Registros emocionales</span>
+          <h2>230 <small>Registros</small></h2>
+        </div>
+      </div>
+
+      <!-- CARD 4 -->
+      <div class="inicio-card">
+        <div class="card-icon">
+          <img src="image/registroemocional.png" alt="">
+        </div>
+
+        <div class="card-info">
+          <span class="card-title">Usuarios de bajo estado</span>
+          <h2>5 <small>Usuarios</small></h2>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!--ACTIVIDADES RECIENTES-->
+    <div class="admin-grid-bottom">
+
+  <!-- ACTIVIDAD RECIENTE -->
+  <div class="actividad-box">
+
+    <h3>Actividad del sistema</h3>
+
+    <div class="actividad-lista" id="actividadLista">
+
+      <div class="actividad-item">
+        <div class="actividad-icono">
+          <img src="image/user.png">
+        </div>
+
+        <div class="actividad-info">
+          <strong>Nuevo usuario registrado</strong>
+          <p>Carlos Ramírez se registró en la plataforma</p>
+        </div>
+
+        <span>Hace 5 minutos</span>
+      </div>
+
+      <div class="actividad-item">
+        <div class="actividad-icono">
+          <img src="image/registroemocional.png">
+        </div>
+
+        <div class="actividad-info">
+          <strong>Registro emocional</strong>
+          <p>Brenda Palasio registró su estado: Ansioso (5)</p>
+        </div>
+
+        <span>Hace 18 minutos</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
   <!-- ========================= -->
-  <!-- 🚀 SCRIPT -->
+  <!-- GRAFICA-->
+  <!-- ========================= -->
+   <!-- ===================================== -->
+<!-- GRAFICA REGISTROS POR EMOCION -->
+<!-- PONLO A LA DERECHA DE ACTIVIDAD -->
+<!-- ===================================== -->
+
+<div class="emocion-box">
+
+  <div class="emocion-top">
+    <h3>Registros por emoción</h3>
+
+    <select>
+      <option>Este mes</option>
+      <option>Hoy</option>
+      <option>Semana</option>
+    </select>
+  </div>
+
+  <div class="emocion-content">
+
+    <!-- DONA -->
+    <div class="emocion-chart">
+      <canvas id="graficaEmociones"></canvas>
+
+      <div class="emocion-total">
+        <strong id="totalEmociones">0</strong>
+        <span>Total</span>
+      </div>
+    </div>
+
+    <!-- LEYENDA -->
+    <div class="emocion-legend" id="emocionLegend">
+
+      <div class="legend-item">
+        <span class="dot feliz"></span>
+        <label>Feliz</label>
+        <small>0%</small>
+        <b>0</b>
+      </div>
+
+      <div class="legend-item">
+        <span class="dot neutral"></span>
+        <label>Neutral</label>
+        <small>0%</small>
+        <b>0</b>
+      </div>
+
+      <div class="legend-item">
+        <span class="dot ansioso"></span>
+        <label>Ansioso</label>
+        <small>0%</small>
+        <b>0</b>
+      </div>
+
+      <div class="legend-item">
+        <span class="dot triste"></span>
+        <label>Triste</label>
+        <small>0%</small>
+        <b>0</b>
+      </div>
+
+      <div class="legend-item">
+        <span class="dot enojado"></span>
+        <label>Enojado</label>
+        <small>0%</small>
+        <b>0</b>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+  </main>
+
+  <!-- ========================= -->
+  <!-- SCRIPT -->
   <!-- ========================= -->
   <script src="app.js"></script>
 

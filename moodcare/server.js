@@ -434,6 +434,90 @@ app.get("/estado-hoy/:userId", async (req, res) => {
   }
 });
 
+
+// =========================
+// INICCIO ADMON CUADROS EMOCIONES
+// =========================
+
+app.get("/api/admin/resumen", async (req, res) => {
+  try {
+
+    // 👥 mismos usuarios que usuario.html
+    const usuariosData = await pool.query(`
+      SELECT *
+      FROM usuarios u
+      JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+      JOIN roles r ON ur.id_rol = r.id_rol
+      WHERE r.nombre = 'usuario'
+    `);
+
+    const usuarios = usuariosData.rows.length;
+
+    // 🟢 activos hoy
+    const activos = usuariosData.rows.filter(u =>
+      new Date(u.actualizado_en).toDateString() === new Date().toDateString()
+    ).length;
+
+    // 😊 registros emocionales
+    const registros = await pool.query(`
+      SELECT COUNT(*) AS total
+      FROM registros_estado_animo
+    `);
+
+    // 🔴 bajos
+    const bajos = await pool.query(`
+      SELECT COUNT(DISTINCT id_usuario) AS total
+      FROM registros_estado_animo
+      WHERE puntuacion <= 3
+    `);
+
+    res.json({
+      usuarios,
+      activos,
+      registros: registros.rows[0].total,
+      bajos: bajos.rows[0].total
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error resumen admin" });
+  }
+});
+
+// =========================
+// Actividades recientes
+// =========================
+app.get("/api/admin/actividad", async (req, res) => {
+  try {
+
+    // Último usuario registrado
+    const usuario = await pool.query(`
+      SELECT nombre, creado_en
+      FROM usuarios
+      ORDER BY creado_en DESC
+      LIMIT 1
+    `);
+
+    // Último registro emocional
+    const registro = await pool.query(`
+      SELECT u.nombre, r.etiqueta, r.puntuacion, r.creado_en
+      FROM registros_estado_animo r
+      JOIN usuarios u ON u.id_usuario = r.id_usuario
+      ORDER BY r.creado_en DESC
+      LIMIT 1
+    `);
+
+    res.json({
+      ultimoUsuario: usuario.rows[0] || null,
+      ultimoRegistro: registro.rows[0] || null
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error actividad reciente" });
+  }
+});
+
 // =========================
 // 🚀 SERVIDOR
 // =========================

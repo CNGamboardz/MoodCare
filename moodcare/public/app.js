@@ -1649,3 +1649,112 @@ function cargarChatsRecientes(){
 
   `;
 }
+
+
+/*INICION ADMON*/
+// ======================================
+// INICIO ADMIN - RESUMEN TARJETAS
+// ======================================
+
+async function cargarResumenAdmin() {
+  try {
+    const res = await fetch("/api/admin/resumen");
+    const data = await res.json();
+
+    // Tarjetas
+    const nums = document.querySelectorAll(".card-info h2");
+
+    if (nums.length >= 4) {
+      nums[0].innerHTML = `${data.usuarios} <small>Usuarios</small>`;
+      nums[1].innerHTML = `${data.activos} <small>Hoy</small>`;
+      nums[2].innerHTML = `${data.registros} <small>Registros</small>`;
+      nums[3].innerHTML = `${data.bajos} <small>Usuarios</small>`;
+    }
+
+  } catch (error) {
+    console.error("Error cargando resumen admin:", error);
+  }
+}
+
+// Ejecutar solo en inicio_admin
+if (window.location.pathname.includes("inicio_admin.html")) {
+  cargarResumenAdmin();
+}
+
+//ACTIVIDADES RECIENTES//
+// ======================================
+// ACTIVIDAD RECIENTE ADMIN
+// ======================================
+
+function tiempoTranscurrido(fecha) {
+  const ahora = new Date();
+  const f = new Date(fecha);
+
+  const diff = Math.floor((ahora - f) / 1000 / 60);
+
+  if (diff < 1) return "Hace unos segundos";
+  if (diff < 60) return `Hace ${diff} minutos`;
+
+  const horas = Math.floor(diff / 60);
+  if (horas < 24) return `Hace ${horas} horas`;
+
+  const dias = Math.floor(horas / 24);
+  return `Hace ${dias} días`;
+}
+
+async function cargarActividadAdmin() {
+  try {
+    const res = await fetch("/api/admin/actividad");
+    const data = await res.json();
+
+    const contenedor = document.getElementById("actividadLista");
+
+    if (!contenedor) return;
+
+    contenedor.innerHTML = "";
+
+    // Último usuario
+    if (data.ultimoUsuario) {
+      contenedor.innerHTML += `
+        <div class="actividad-item">
+          <div class="actividad-icono">
+            <img src="image/user.png">
+          </div>
+
+          <div class="actividad-info">
+            <strong>Nuevo usuario registrado</strong>
+            <p>${data.ultimoUsuario.nombre} se registró en la plataforma</p>
+          </div>
+
+          <span>${tiempoTranscurrido(data.ultimoUsuario.creado_en)}</span>
+        </div>
+      `;
+    }
+
+    // Último registro emocional
+    if (data.ultimoRegistro) {
+      contenedor.innerHTML += `
+        <div class="actividad-item">
+          <div class="actividad-icono">
+            <img src="image/registroemocional.png">
+          </div>
+
+          <div class="actividad-info">
+            <strong>Registro emocional</strong>
+            <p>${data.ultimoRegistro.nombre} registró su estado: ${data.ultimoRegistro.etiqueta} (${data.ultimoRegistro.puntuacion})</p>
+          </div>
+
+          <span>${tiempoTranscurrido(data.ultimoRegistro.creado_en)}</span>
+        </div>
+      `;
+    }
+
+  } catch (error) {
+    console.error("Error actividad admin:", error);
+  }
+}
+
+// ejecutar solo inicio admin
+if (window.location.pathname.includes("inicio_admin.html")) {
+  cargarActividadAdmin();
+}

@@ -3676,3 +3676,362 @@ body.inicio-page .main{
   overflow-x:hidden !important;
   padding-bottom:40px !important;
 }
+
+
+/*FIN INICIO*/
+
+/*INICIO DE ADMINISTRADORES*/
+/* ==================================================
+   AJUSTE FINO HEADER + CARDS
+   MÁS A LA IZQUIERDA Y UN POCO MÁS GRANDE
+================================================== */
+
+.inicio-admin{
+  padding-left:100px;
+}
+
+/* HEADER */
+.inicio-header{
+  margin-bottom:18px;
+}
+
+.inicio-header h1{
+  font-size:32px;
+  font-weight:700;
+  color:#222;
+  margin-bottom:8px;
+}
+
+.inicio-header p{
+  font-size:15px;
+  color:#444;
+  margin:0;
+}
+
+/* TARJETAS */
+.inicio-cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+
+/* CARD */
+.inicio-card{
+  height:98px;
+  border-radius:26px;
+  padding:16px 18px;
+  background:#efefed;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* DESTACADA */
+.inicio-card.destacada{
+  background:#9f967f;
+  color:#fff;
+}
+
+/* ICONO */
+.card-icon{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  border-radius:50%;
+  background:#efbfae;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.card-icon img{
+  width:19px;
+  height:19px;
+}
+
+/* TEXTO */
+.card-title{
+  display:block;
+  font-size:12px;
+  margin-bottom:6px;
+  color:#444;
+}
+
+.inicio-card.destacada .card-title{
+  color:#fff;
+}
+
+.card-info h2{
+  font-size:24px;
+  font-weight:600;
+  margin:0;
+  line-height:1;
+}
+
+.card-info small{
+  font-size:12px;
+  color:#666;
+}
+
+.inicio-card.destacada small{
+  color:#f2f2f2;
+}
+
+/*Actividades recientes*/
+
+/*Actividades recientes*/
+
+/* ==========================================
+   INICIO ADMIN - ACTIVIDAD + GRAFICA
+   COMPLETO ARREGLADO
+========================================== */
+
+.admin-grid-bottom{
+  width:100%;
+  margin-top:18px;
+
+  display:grid !important;
+  grid-template-columns:62% 36% !important;
+  gap:18px !important;
+
+  align-items:start !important;
+}
+
+/* FUERZA POSICION */
+.actividad-box{
+  grid-column:1;
+  grid-row:1;
+}
+
+.emocion-box{
+  grid-column:2;
+  grid-row:1;
+}
+
+/* ==========================================
+   ACTIVIDAD RECIENTE
+========================================== */
+
+.actividad-box{
+  width:100%;
+  min-height:350px;
+  background:#ffffff;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 2px 10px rgba(0,0,0,.03);
+}
+
+.actividad-box h3{
+  margin:0 0 20px 0;
+  font-size:26px;
+  font-weight:700;
+  color:#111;
+}
+
+.actividad-lista{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.actividad-item{
+  display:grid;
+  grid-template-columns:48px 1fr auto;
+  gap:14px;
+  align-items:flex-start;
+  padding-bottom:16px;
+  border-bottom:1px solid #ece8e4;
+}
+
+.actividad-item:last-child{
+  border-bottom:none;
+}
+
+.actividad-icono{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:#efc2b0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.actividad-icono img{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+.actividad-info strong{
+  display:block;
+  font-size:18px;
+  font-weight:700;
+  color:#111;
+  margin-bottom:4px;
+}
+
+.actividad-info p{
+  margin:0;
+  font-size:14px;
+  color:#555;
+  line-height:1.4;
+}
+
+.actividad-item span{
+  font-size:13px;
+  color:#777;
+  white-space:nowrap;
+  margin-top:3px;
+}
+
+/* ==========================================
+   GRAFICA EMOCIONES
+========================================== */
+
+.emocion-box{
+  width:100%;
+  min-height:350px;
+  background:#ffffff;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 2px 10px rgba(0,0,0,.03);
+}
+
+.emocion-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.emocion-top h3{
+  margin:0;
+  font-size:24px;
+  font-weight:700;
+  color:#111;
+}
+
+.emocion-top select{
+  border:1px solid #d8d0c8;
+  background:#fff;
+  border-radius:30px;
+  padding:8px 14px;
+  font-size:12px;
+  color:#444;
+  outline:none;
+  cursor:pointer;
+}
+
+.emocion-content{
+  display:grid;
+  grid-template-columns:170px 1fr;
+  gap:18px;
+  align-items:center;
+}
+
+.emocion-chart{
+  width:170px;
+  height:170px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.emocion-chart canvas{
+  width:170px !important;
+  height:170px !important;
+}
+
+.emocion-total{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.emocion-total strong{
+  font-size:38px;
+  font-weight:800;
+  color:#111;
+  line-height:1;
+}
+
+.emocion-total span{
+  font-size:14px;
+  color:#777;
+  margin-top:4px;
+}
+
+.emocion-legend{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.legend-item{
+  display:grid;
+  grid-template-columns:12px 1fr 40px 24px;
+  gap:10px;
+  align-items:center;
+  font-size:14px;
+}
+
+.legend-item label{
+  color:#333;
+}
+
+.legend-item small{
+  color:#777;
+  text-align:right;
+}
+
+.legend-item b{
+  color:#111;
+  text-align:right;
+  font-weight:700;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  display:block;
+}
+
+.dot.feliz{ background:#ddb09a; }
+.dot.neutral{ background:#ebb274; }
+.dot.ansioso{ background:#e8e2d8; }
+.dot.triste{ background:#9a927a; }
+.dot.enojado{ background:#433f31; }
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width:1200px){
+
+  .admin-grid-bottom{
+    grid-template-columns:1fr !important;
+  }
+
+  .actividad-box,
+  .emocion-box{
+    grid-column:auto;
+    grid-row:auto;
+  }
+
+  .emocion-content{
+    grid-template-columns:1fr;
+    justify-items:center;
+  }
+
+}
+
+
+
+
