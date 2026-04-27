@@ -537,36 +537,40 @@ app.get("/historial/:userId", async (req, res) => {
 
     const result = await pool.query(`
       SELECT 
+        m.id_mensaje,
+        m.contenido,
+        m.creado_en,
         c.id_conversacion,
-        c.titulo,
+        COALESCE(c.titulo, 'Conversación') AS titulo,
 
-        -- último mensaje
-        (
-          SELECT m.contenido
-          FROM mensajes m
-          WHERE m.id_conversacion = c.id_conversacion
-          ORDER BY m.creado_en DESC
-          LIMIT 1
-        ) AS ultimo_mensaje,
-
-        -- última emoción
+        -- 🔥 emoción MÁS CERCANA a ese mensaje
         (
           SELECT r.etiqueta
           FROM registros_estado_animo r
-          WHERE r.id_usuario = c.id_usuario
+          WHERE r.id_usuario = $1
+          AND r.nota = m.contenido -- 🔥 relacionamos por el mensaje
           ORDER BY r.creado_en DESC
           LIMIT 1
         ) AS emocion
 
-      FROM conversaciones c
+      FROM mensajes m
+
+      JOIN conversaciones c 
+        ON m.id_conversacion = c.id_conversacion
+
+      JOIN cat_emisores_mensaje e 
+        ON m.id_emisor = e.id_emisor
+
       WHERE c.id_usuario = $1
-      ORDER BY c.creado_en DESC
+      AND e.codigo = 'usuario'
+
+      ORDER BY m.creado_en DESC
     `, [userId]);
 
     res.json(result.rows);
 
   } catch (error) {
-    console.error(error);
+    console.error("💥 ERROR HISTORIAL:", error);
     res.status(500).json({ error: "Error en historial" });
   }
 });

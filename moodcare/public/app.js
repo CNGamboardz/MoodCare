@@ -1099,6 +1099,10 @@ function editarAdmin(id) {
   console.log("Editar admin:", id);
 }
 
+let historialData = [];
+let paginaActual = 1;
+const porPagina = 5;
+
 /* ========================= */
 /* 📜 CARGAR HISTORIAL */
 /* ========================= */
@@ -1107,70 +1111,115 @@ async function cargarHistorialUsuario() {
   const user = JSON.parse(localStorage.getItem("user"));
   if (!user) return;
 
-  const tabla = document.getElementById("tablaHistorial");
   const total = document.getElementById("totalConversaciones");
-  const resumen = document.getElementById("resumenEmociones");
-  const contador = document.getElementById("contadorHistorial");
-
-  if (!tabla) return;
 
   try {
 
     const res = await fetch(`http://localhost:3000/historial/${user.id}`);
-    const data = await res.json();
+    historialData = await res.json();
 
-    tabla.innerHTML = "";
+    total.innerText = historialData.length;
 
-    let emocionesCount = {};
-
-    data.forEach(conv => {
-
-      const emocion = conv.emocion || "neutral";
-      emocionesCount[emocion] = (emocionesCount[emocion] || 0) + 1;
-
-      tabla.innerHTML += `
-        <tr>
-
-          <td>${conv.titulo || "Conversación"}</td>
-
-          <td>${conv.ultimo_mensaje || "-"}</td>
-
-          <td>
-            <div class="historial-emocion">
-              ${emojiHistorial(emocion)} ${emocion}
-            </div>
-          </td>
-
-          <td class="historial-acciones">
-            <button>
-              <img src="image/editar_admin.png">
-            </button>
-            <button>
-              <img src="image/eliminar_admin.png">
-            </button>
-          </td>
-
-        </tr>
-      `;
-    });
-
-    total.innerText = data.length;
-    contador.innerText = `Mostrando ${data.length} conversaciones`;
-
-    // 🔥 RESUMEN BONITO
-    resumen.innerHTML = "";
-
-    Object.keys(emocionesCount).forEach(e => {
-      resumen.innerHTML += `
-        <span class="badge-emocion">
-          ${emojiHistorial(e)} ${e} ${emocionesCount[e]}
-        </span>
-      `;
-    });
+    renderTabla();
+    renderResumen();
+    renderPaginacion();
 
   } catch (error) {
     console.error(error);
   }
+}
+
+function renderTabla() {
+
+  const tabla = document.getElementById("tablaHistorial");
+  const contador = document.getElementById("contadorHistorial");
+
+  tabla.innerHTML = "";
+
+  const inicio = (paginaActual - 1) * porPagina;
+  const fin = inicio + porPagina;
+
+  const datosPagina = historialData.slice(inicio, fin);
+
+  datosPagina.forEach(msg => {
+
+    const emocion = msg.emocion || "neutral";
+
+    tabla.innerHTML += `
+      <tr>
+
+        <td>${msg.titulo || "Conversación"}</td>
+
+        <td>${msg.contenido || "-"}</td>
+
+        <td>
+          <div class="historial-emocion">
+            ${emojiHistorial(emocion)} ${emocion}
+          </div>
+        </td>
+
+        <td class="historial-acciones">
+          <button>
+            <img src="image/editar_admin.png">
+          </button>
+          <button>
+            <img src="image/eliminar_admin.png">
+          </button>
+        </td>
+
+      </tr>
+    `;
+  });
+
+  contador.innerText = `Mostrando ${datosPagina.length} de ${historialData.length} mensajes`;
+}
+
+function renderResumen() {
+
+  const resumen = document.getElementById("resumenEmociones");
+
+  let emocionesCount = {};
+
+  historialData.forEach(msg => {
+    const emocion = msg.emocion || "neutral";
+    emocionesCount[emocion] = (emocionesCount[emocion] || 0) + 1;
+  });
+
+  resumen.innerHTML = "";
+
+  Object.keys(emocionesCount).forEach(e => {
+    resumen.innerHTML += `
+      <span class="badge-emocion ${e}">
+        ${emojiHistorial(e)} ${e} ${emocionesCount[e]}
+      </span>
+    `;
+  });
+}
+
+function renderPaginacion() {
+
+  const contenedor = document.getElementById("paginacionHistorial");
+  contenedor.innerHTML = "";
+
+  const totalPaginas = Math.ceil(historialData.length / porPagina);
+
+  for (let i = 1; i <= totalPaginas; i++) {
+
+    contenedor.innerHTML += `
+      <button 
+        class="btn-pagina ${i === paginaActual ? "activa" : ""}"
+        onclick="cambiarPagina(${i})"
+      >
+        ${i}
+      </button>
+    `;
+  }
+}
+
+function cambiarPagina(pagina) {
+  paginaActual = pagina;
+  renderTabla();
+  renderPaginacion();
 }
 
 
