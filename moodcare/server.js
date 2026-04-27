@@ -529,3 +529,44 @@ app.delete("/admins/:id", async (req, res) => {
     res.status(500).json({ error: "Error al eliminar admin" });
   }
 });
+
+app.get("/historial/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+
+    const result = await pool.query(`
+      SELECT 
+        c.id_conversacion,
+        c.titulo,
+
+        -- último mensaje
+        (
+          SELECT m.contenido
+          FROM mensajes m
+          WHERE m.id_conversacion = c.id_conversacion
+          ORDER BY m.creado_en DESC
+          LIMIT 1
+        ) AS ultimo_mensaje,
+
+        -- última emoción
+        (
+          SELECT r.etiqueta
+          FROM registros_estado_animo r
+          WHERE r.id_usuario = c.id_usuario
+          ORDER BY r.creado_en DESC
+          LIMIT 1
+        ) AS emocion
+
+      FROM conversaciones c
+      WHERE c.id_usuario = $1
+      ORDER BY c.creado_en DESC
+    `, [userId]);
+
+    res.json(result.rows);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en historial" });
+  }
+});

@@ -306,6 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarRecomendaciones();
   cargarEstadoEmocional();
   cargarAdmins(); // 👈 ESTA LÍNEA NUEVA
+  cargarHistorialUsuario();
 });
 
 /* ========================= */
@@ -1061,10 +1062,15 @@ async function cargarAdmins() {
           </td>
 
           <!-- ⚙️ ACCIONES -->
-          <td class="admin-acciones">
-            <button onclick="editarAdmin('${admin.id_usuario}')">✏️</button>
-            <button onclick="eliminarAdmin('${admin.id_usuario}')">🗑️</button>
-          </td>
+        <td class="admin-acciones">
+          <button onclick="editarAdmin('${admin.id_usuario}')">
+            <img src="image/editar_admin.png">
+          </button>
+
+          <button onclick="eliminarAdmin('${admin.id_usuario}')">
+            <img src="image/eliminar_admin.png">
+          </button>
+        </td>
 
         </tr>
       `;
@@ -1107,4 +1113,94 @@ async function eliminarAdmin(id) {
 /* ========================= */
 function editarAdmin(id) {
   console.log("Editar admin:", id);
+}
+
+/* ========================= */
+/* 📜 CARGAR HISTORIAL */
+/* ========================= */
+async function cargarHistorialUsuario() {
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+
+  const tabla = document.getElementById("tablaHistorial");
+  const total = document.getElementById("totalConversaciones");
+  const resumen = document.getElementById("resumenEmociones");
+  const contador = document.getElementById("contadorHistorial");
+
+  if (!tabla) return;
+
+  try {
+
+    const res = await fetch(`http://localhost:3000/historial/${user.id}`);
+    const data = await res.json();
+
+    tabla.innerHTML = "";
+
+    let emocionesCount = {};
+
+    data.forEach(conv => {
+
+      const emocion = conv.emocion || "neutral";
+      emocionesCount[emocion] = (emocionesCount[emocion] || 0) + 1;
+
+      tabla.innerHTML += `
+        <tr>
+
+          <td>${conv.titulo || "Conversación"}</td>
+
+          <td>${conv.ultimo_mensaje || "-"}</td>
+
+          <td>
+            <div class="historial-emocion">
+              ${emojiHistorial(emocion)} ${emocion}
+            </div>
+          </td>
+
+          <td class="historial-acciones">
+            <button>
+              <img src="image/editar_admin.png">
+            </button>
+            <button>
+              <img src="image/eliminar_admin.png">
+            </button>
+          </td>
+
+        </tr>
+      `;
+    });
+
+    total.innerText = data.length;
+    contador.innerText = `Mostrando ${data.length} conversaciones`;
+
+    // 🔥 RESUMEN BONITO
+    resumen.innerHTML = "";
+
+    Object.keys(emocionesCount).forEach(e => {
+      resumen.innerHTML += `
+        <span class="badge-emocion">
+          ${emojiHistorial(e)} ${e} ${emocionesCount[e]}
+        </span>
+      `;
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+/* ========================= */
+/* 😀 EMOJIS HISTORIAL */
+/* ========================= */
+function emojiHistorial(e) {
+  if (!e) return "😐";
+  e = e.toLowerCase();
+
+  if (e.includes("feliz")) return "😃";
+  if (e.includes("triste")) return "😢";
+  if (e.includes("ansioso")) return "😟";
+  if (e.includes("enojado")) return "😡";
+
+  return "😐";
 }

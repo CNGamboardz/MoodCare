@@ -51,11 +51,53 @@
   </aside>
 
 
-  <main class="main">
-    
-  </main>
+    <main class="historial-content">
+
+      <h1>Historial de mensajes</h1>
+      <p class="historial-sub">Revisa tus conversaciones anteriores con ModCare</p>
+
+      <!-- 🔥 RESUMEN -->
+      <div class="historial-top">
+
+        <div class="historial-total">
+          <span>Total conversaciones</span>
+          <h2 id="totalConversaciones">0</h2>
+          <small>Conversaciones</small>
+        </div>
+
+        <div class="historial-emociones">
+          <span>Resumen emocional</span>
+          <div id="resumenEmociones" class="emociones-list"></div>
+        </div>
+
+      </div>
+
+      <!-- 🔥 TABLA -->
+      <div class="historial-card">
+
+        <table class="historial-tabla">
+          <thead>
+            <tr>
+              <th>Conversación</th>
+              <th>Último mensaje</th>
+              <th>Emoción detectada</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody id="tablaHistorial"></tbody>
+
+        </table>
+
+        <div class="historial-footer">
+          <span id="contadorHistorial">Mostrando 0 conversaciones</span>
+        </div>
+
+      </div>
+
+    </main>
 
   <script src="app.js"></script>
-  
+
 </body>
 </html>
