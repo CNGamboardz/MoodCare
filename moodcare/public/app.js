@@ -751,11 +751,16 @@ function mostrarVacio() {
 ========================= */
 function emoji(e) {
   if (!e) return "😐";
+
   e = e.toLowerCase();
-  if (e.includes("feliz")) return "😃";
+
+  if (e.includes("feliz")) return "😄";
   if (e.includes("triste")) return "😢";
-  if (e.includes("ansioso")) return "😟";
-  return "😐";
+  if (e.includes("ansioso") || e.includes("ansiedad")) return "😟";
+  if (e.includes("neutral")) return "😐";
+  if (e.includes("enojado") || e.includes("enojo")) return "😠";
+
+  return "🙂";
 }
 
 function formatoFecha(f) {
@@ -777,7 +782,8 @@ function getColor(e) {
   if (e.includes("ansiedad")) return "#D8CDB5";
   if (e.includes("triste")) return "#8E8773";
   if (e.includes("neutral")) return "#ccc";
-
+  if (e.includes("enojado")) return "#3D372A";
+  
   return "#ddd";
 }
 

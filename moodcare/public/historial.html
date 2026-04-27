@@ -16,46 +16,46 @@
     </h2>
 
     <nav id="menu">
-      <div class="menu-item" onclick="window.location.href='inicio.html'">
-        <img src="image/casa.png" alt="">
+        <div class="menu-item" onclick="window.location.href='inicio.html'">
+        <img src="image/casa.png">
         <span>Inicio</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='index.html'">
-        <img src="image/chat.png" alt="">
         <span>Chat</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='registro.html'">
-        <img src="image/registroemocional.png" alt="">
+        <img src="image/registroemocional.png">
         <span>Registro emocional</span>
       </div>
 
       <div class="menu-item active">
-        <img src="image/historial.png" alt="">
+        <img src="image/historial.png">
         <span>Historial</span>
       </div>
     </nav>
 
+    <!-- 👤 USUARIO -->
     <div class="user-box">
-      <img src="image/user.jpg" alt="user">
+      <img id="fotoPerfil" src="image/user.jpg">
       <div>
-        <b>Tu Nombre</b><br>
-        <small>tu@email.com</small>
+        <b id="nombreUser">Tu Nombre</b><br>
+        <small id="correoUser">tu@email.com</small>
       </div>
     </div>
+
+    <!-- 🔐 LOGOUT -->
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
   </aside>
 
-  <main class="main">
-    <h1>Historial</h1>
-    <p>Aquí verás tus registros anteriores:</p>
 
-    <div class="card">
-      <p>😢 Triste - 5/10</p>
-      <p>😊 Feliz - 8/10</p>
-      <p>😟 Ansioso - 6/10</p>
-    </div>
+  <main class="main">
+    
   </main>
 
+  <script src="app.js"></script>
+  
 </body>
 </html>
