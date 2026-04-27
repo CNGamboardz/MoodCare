@@ -1249,11 +1249,24 @@ function togglePassword() {
   }
 }
 
+
+
+
+
+
+
 async function cargarUsuarios() {
 
   const tabla = document.getElementById("tablaUsuarios");
+
+  const total = document.getElementById("totalUsuarios");
+  const activos = document.getElementById("usuariosActivos");
+  const inactivos = document.getElementById("usuariosInactivos");
+  const bloqueados = document.getElementById("usuariosBloqueados");
+
   const contador = document.getElementById("contadorUsuarios");
 
+  // 🔒 evita errores si no estás en esa página
   if (!tabla) return;
 
   try {
@@ -1263,50 +1276,200 @@ async function cargarUsuarios() {
 
     tabla.innerHTML = "";
 
+    let countActivos = 0;
+    let countBloqueados = 0;
+    let countInactivos = 0;
+
     data.forEach(user => {
 
-      let estadoTexto = "Activo";
-      let claseEstado = "activo";
+    let estadoTexto = "Activo";
+    let claseEstado = "activo";
 
-      if (user.id_estado_usuario == 2) {
-        estadoTexto = "Bloqueado";
-        claseEstado = "bloqueado";
-      }
+    if (user.id_estado_usuario == 2) {
+      estadoTexto = "Bloqueado";
+      claseEstado = "bloqueado";
+    }
 
-      tabla.innerHTML += `
-        <tr>
+    if (claseEstado === "activo") countActivos++;
+    if (claseEstado === "bloqueado") countBloqueados++;
 
-          <td>
-            <div class="user-info">
-              <img src="uploads/${user.foto_perfil || 'user.jpg'}">
-              <div>
-                <b>${user.nombre}</b>
-                <small>${user.correo}</small>
-              </div>
+    // 🔥 PUNTUACIÓN (ejemplo)
+    const puntuacion = Math.floor(Math.random() * 100);
+
+    let claseScore = "bajo";
+
+    if (puntuacion >= 80) claseScore = "alto";
+    else if (puntuacion >= 60) claseScore = "medio";
+    else if (puntuacion >= 40) claseScore = "riesgo";
+
+    tabla.innerHTML += `
+      <tr data-estado="${claseEstado}"
+      data-score="${puntuacion}"
+      data-fecha="${user.creado_en}">
+
+        <td>
+          <div class="user-info">
+            <img src="uploads/${user.foto_perfil || 'user.jpg'}">
+            <div>
+              <b>${user.nombre}</b>
+              <small>${user.correo}</small>
             </div>
-          </td>
+          </div>
+        </td>
 
-          <td>
-            <span class="badge ${claseEstado}">
-              ${estadoTexto}
-            </span>
-          </td>
+        <td>
+          <span class="badge ${claseEstado}">
+            ${estadoTexto}
+          </span>
+        </td>
 
-          <td>
-            ${new Date(user.creado_en).toLocaleDateString()}
-          </td>
+        <td>
+          <span class="score ${claseScore}">
+            ${puntuacion}
+          </span>
+        </td>
 
-          <td>
-            <button class="btn-action">👁</button>
-          </td>
+        <td>
+          ${new Date(user.creado_en).toLocaleDateString()}
+        </td>
 
-        </tr>
-      `;
-    });
+        <td>
+          <button class="btn-action">👁</button>
+        </td>
 
-    contador.innerText = `Mostrando ${data.length} usuarios`;
+      </tr>
+    `;
+  });
+
+    // 📊 CARDS
+    if (total) total.innerText = data.length;
+    if (activos) activos.innerText = countActivos;
+    if (bloqueados) bloqueados.innerText = countBloqueados;
+    if (inactivos) inactivos.innerText = countInactivos;
+
+    // 📌 CONTADOR
+    if (contador) {
+      contador.innerText = `Mostrando ${data.length} usuarios`;
+    }
 
   } catch (error) {
-    console.error(error);
+    console.error("Error cargando usuarios:", error);
+  }
+}
+
+// ABRIR / CERRAR DROPDOWN
+document.addEventListener("click", (e) => {
+  const filtro = document.querySelector(".filtro-estado");
+
+  if (filtro && filtro.contains(e.target)) {
+    filtro.classList.toggle("active");
+  } else if (filtro) {
+    filtro.classList.remove("active");
+  }
+});
+
+// FILTRAR
+function filtrarEstado(tipo) {
+  const filas = document.querySelectorAll("#tablaUsuarios tr");
+  const texto = document.getElementById("filtroTexto");
+
+  texto.innerText = tipo === "todos"
+    ? "Todos"
+    : tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+  filas.forEach(fila => {
+    const estado = fila.getAttribute("data-estado");
+
+    if (tipo === "todos" || estado === tipo) {
+      fila.style.display = "";
+    } else {
+      fila.style.display = "none";
+    }
+  });
+}
+
+function abrirFiltros() {
+  document.getElementById("modalFiltros").classList.add("active");
+}
+
+function cerrarFiltros() {
+  document.getElementById("modalFiltros").classList.remove("active");
+} 
+
+function aplicarFiltros() {
+
+  const estado = document.querySelector('input[name="estado"]:checked')?.value;
+  const emocion = document.querySelector('input[name="emocion"]:checked')?.value;
+  const fecha = document.querySelector('input[name="fecha"]:checked')?.value;
+
+  const filas = document.querySelectorAll("#tablaUsuarios tr");
+
+  filas.forEach(fila => {
+
+    let mostrar = true;
+
+    // 🔹 FILTRO ESTADO
+    const estadoFila = fila.getAttribute("data-estado");
+
+    if (estado !== "todos" && estado !== estadoFila) {
+      mostrar = false;
+    }
+
+    // 🔹 FILTRO EMOCION
+    const puntuacion = parseInt(fila.getAttribute("data-score"));
+
+    if (emocion === "alto" && puntuacion < 80) mostrar = false;
+    if (emocion === "medio" && (puntuacion < 60 || puntuacion >= 80)) mostrar = false;
+    if (emocion === "riesgo" && (puntuacion < 40 || puntuacion >= 60)) mostrar = false;
+    if (emocion === "bajo" && puntuacion >= 40) mostrar = false;
+
+    // 🔹 FILTRO FECHA
+    const fechaFila = new Date(fila.getAttribute("data-fecha"));
+    const hoy = new Date();
+
+    if (fecha === "hoy") {
+      if (fechaFila.toDateString() !== hoy.toDateString()) {
+        mostrar = false;
+      }
+    }
+
+    if (fecha === "semana") {
+      const semana = new Date();
+      semana.setDate(hoy.getDate() - 7);
+
+      if (fechaFila < semana) {
+        mostrar = false;
+      }
+    }
+
+    if (fecha === "mes") {
+      const mes = new Date();
+      mes.setMonth(hoy.getMonth() - 1);
+
+      if (fechaFila < mes) {
+        mostrar = false;
+      }
+    }
+
+    fila.style.display = mostrar ? "" : "none";
+
+  });
+
+  cerrarFiltros();
+}
+
+function limpiarFiltros() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+
+  const filas = document.querySelectorAll("#tablaUsuarios tr");
+  filas.forEach(fila => fila.style.display = "");
+
+  cerrarFiltros();
+}
+
+window.onclick = function(e) {
+  const modal = document.getElementById("modalFiltros");
+  if (e.target === modal) {
+    modal.classList.remove("activo");
   }
 }
