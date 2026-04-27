@@ -10,13 +10,65 @@ function fill(text) {
 /* 🔐 SESIÓN (LOGIN) */
 /* ========================= */
 function verificarSesion() {
-  const user = localStorage.getItem("user");
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const path = window.location.pathname;
-  const esAuthPage = path.includes("login.html") || path.includes("register.html");
 
-  if (!user && !esAuthPage) {
-    window.location.href = "login.html";
+  const esLogin = path.includes("login.html") || path.includes("register.html");
+
+  // 🔒 Sin sesión → login
+  if (!user && !esLogin) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  if (!user) return;
+
+  const esAdmin = user.rol === "admin";
+  const paginaActual = path.split("/").pop();
+
+  // =========================
+  // 🚀 REDIRECCIÓN INICIAL (SOLO INDEX)
+  // =========================
+  if (paginaActual === "" || paginaActual === "index.html") {
+    if (esAdmin) {
+      window.location.replace("inicio_admin.html");
+    } else {
+      window.location.replace("inicio.html");
+    }
+    return;
+  }
+
+  // =========================
+  // 🧭 PÁGINAS
+  // =========================
+  const paginasAdmin = [
+    "inicio_admin.html",
+    "usuario.html",
+    "registros_emocionales_admin.html",
+    "estadisticas.html",
+    "registrar_admins.html" // ✅ CORREGIDO
+  ];
+
+  const paginasUsuario = [
+    "inicio.html",
+    "registro.html",
+    "historial.html"
+  ];
+
+  // =========================
+  // 🔐 BLOQUEOS
+  // =========================
+
+  // ❌ Usuario intentando entrar a admin
+  if (!esAdmin && paginasAdmin.includes(paginaActual)) {
+    window.location.replace("inicio.html");
+    return;
+  }
+
+  // ❌ Admin intentando entrar a usuario
+  if (esAdmin && paginasUsuario.includes(paginaActual)) {
+    window.location.replace("inicio_admin.html");
+    return;
   }
 }
 
@@ -245,13 +297,15 @@ function toggleMic() {
 /* INICIALIZACIÓN */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  verificarSesion();
+  renderMenu(); // 🔥 ESTA ES LA CLAVE
+  activarMenu();
   mostrarUsuario();
   mostrarSaludo(); 
   activarEnter();
   renderCalendario();
   cargarRecomendaciones();
   cargarEstadoEmocional();
+  cargarAdmins(); // 👈 ESTA LÍNEA NUEVA
 });
 
 /* ========================= */
@@ -701,4 +755,203 @@ function getColor(e) {
   if (e.includes("neutral")) return "#ccc";
 
   return "#ddd";
+}
+
+async function login() {
+  const correo = document.getElementById("correo").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ correo, password })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert("Correo o contraseña incorrectos");
+      return;
+    }
+
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    // 👉 Mejor usa rol si ya lo traes del backend
+    if (data.user.rol === "admin") {
+      window.location.replace("inicio_admin.html");
+    } else {
+      window.location.replace("inicio.html");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Error de conexión");
+  }
+}
+
+function renderMenu() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return;
+
+  const menu = document.getElementById("menu");
+  if (!menu) return;
+
+  if (user.rol === "admin") {
+    menu.innerHTML = `
+      <div class="menu-item" onclick="window.location.href='inicio_admin.html'">
+        <img src="image/casa.png">
+        <span>Inicio</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='usuario.html'">
+        <img src="image/user.png">
+        <span>Usuarios</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='registros_emocionales_admin.html'">
+        <img src="image/registroemocional.png">
+        <span>Registros</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='estadisticas.html'">
+        <img src="image/grafica.png">
+        <span>Estadísticas</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='adminis.html'">
+        <img src="image/admin.png">
+        <span>Registrar Administradores</span>
+      </div>
+    `;
+  } else {
+    menu.innerHTML = `
+      <div class="menu-item" onclick="window.location.href='inicio.html'">
+        <img src="image/casa.png">
+        <span>Inicio</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='index.html'">
+        <img src="image/chat.png">
+        <span>Chat</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='registro.html'">
+        <img src="image/registroemocional.png">
+        <span>Registro emocional</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='historial.html'">
+        <img src="image/historial.png">
+        <span>Historial</span>
+      </div>
+    `;
+  }
+}
+
+function activarMenu() {
+  const pagina = window.location.pathname.split("/").pop();
+
+  document.querySelectorAll(".menu-item").forEach(item => {
+    if (item.onclick?.toString().includes(pagina)) {
+      item.classList.add("active");
+    }
+  });
+}
+
+/* ========================= */
+/* 👑 CARGAR ADMINISTRADORES */
+/* ========================= */
+async function cargarAdmins() {
+
+  const tabla = document.getElementById("tablaAdmins");
+  const contador = document.getElementById("contadorAdmins");
+
+  // 🔒 evitar errores en otras páginas
+  if (!tabla) return;
+
+  try {
+
+    const res = await fetch("http://localhost:3000/admins");
+    const admins = await res.json();
+
+    tabla.innerHTML = "";
+
+    admins.forEach(admin => {
+
+      const foto = admin.foto_perfil
+        ? "uploads/" + admin.foto_perfil
+        : "image/user.jpg";
+
+      const fecha = new Date(admin.creado_en)
+        .toLocaleDateString("es-MX");
+
+      tabla.innerHTML += `
+        <tr>
+
+          <!-- 👤 NOMBRE -->
+          <td class="admin-col-nombre">
+            <div class="admin-user-cell">
+              <img src="${foto}">
+              <span>${admin.nombre}</span>
+            </div>
+          </td>
+
+          <!-- 📧 CORREO -->
+          <td class="admin-col-correo">
+            ${admin.correo}
+          </td>
+
+          <!-- 📅 FECHA -->
+          <td class="admin-col-fecha">
+            ${fecha}
+          </td>
+
+          <!-- ⚙️ ACCIONES -->
+          <td class="admin-acciones">
+            <button onclick="editarAdmin('${admin.id_usuario}')">✏️</button>
+            <button onclick="eliminarAdmin('${admin.id_usuario}')">🗑️</button>
+          </td>
+
+        </tr>
+      `;
+    });
+
+    if (contador) {
+      contador.innerText = `Mostrando ${admins.length} administradores`;
+    }
+
+  } catch (error) {
+    console.error("Error cargando admins:", error);
+  }
+}
+
+
+/* ========================= */
+/* 🗑️ ELIMINAR ADMIN */
+/* ========================= */
+async function eliminarAdmin(id) {
+
+  const confirmar = confirm("¿Eliminar administrador?");
+  if (!confirmar) return;
+
+  try {
+
+    await fetch(`http://localhost:3000/admins/${id}`, {
+      method: "DELETE"
+    });
+
+    cargarAdmins();
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+/* ========================= */
+/* ✏️ EDITAR ADMIN (placeholder) */
+/* ========================= */
+function editarAdmin(id) {
+  console.log("Editar admin:", id);
 }

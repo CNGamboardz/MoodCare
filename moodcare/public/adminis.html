@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodCare</title>
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>
+      <img src="image/logo.png" alt="logo">
+      MoodCare
+    </h2>
+
+    <nav id="menu">
+
+      <div class="menu-item" onclick="window.location.href='./inicio_admin.html'">
+        <img src="image/casa.png">
+        <span>Inicio</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='./usuario.html'">
+        <img src="image/user.png">
+        <span>Usuarios</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='./registros_emocionales_admin.html'">
+        <img src="image/registroemocional.png">
+        <span>Registros</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='./estadisticas.html'">
+        <img src="image/grafica.png">
+        <span>Estadísticas</span>
+      </div>
+
+      <div class="menu-item active">
+        <img src="image/admin.png">
+        <span>Admins</span>
+      </div>
+
+    </nav>
+
+    <!-- 👤 USUARIO -->
+    <div class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg">
+      <div>
+        <b id="nombreUser">Tu Nombre</b><br>
+        <small id="correoUser">tu@email.com</small>
+      </div>
+    </div>
+
+    <!-- 🔐 LOGOUT -->
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
+  </aside>
+
+  <!-- ========================= -->
+  <!-- 📊 CONTENIDO PRINCIPAL -->
+  <!-- ========================= -->
+  <main class="admin-content">
+
+    <div class="admin-header">
+      <h1>Lista de administradores</h1>
+
+      <div class="admin-top-bar">
+        <div class="admin-search-box">
+          <input type="text" id="buscadorAdmins" placeholder="Buscar usuario...">
+        </div>
+
+        <button class="admin-btn-add">Añadir administrador</button>
+      </div>
+    </div>
+
+    <div class="admin-card">
+
+      <table class="admin-tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <!-- 🔥 AQUÍ SE INSERTAN LOS DATOS -->
+        <tbody id="tablaAdmins"></tbody>
+
+      </table>
+
+      <div class="admin-footer">
+        <span id="contadorAdmins">Mostrando 0 administradores</span>
+
+        <div class="admin-paginacion">
+          <button>‹</button>
+          <span class="active">1</span>
+          <button>›</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================= -->
+  <!-- 🚀 SCRIPT -->
+  <!-- ========================= -->
+  <script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodCare</title>
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>
+      <img src="image/logo.png" alt="logo">
+      MoodCare
+    </h2>
+
+    <nav id="menu">
+
+      <!-- 🏠 INICIO -->
+      <div class="menu-item" onclick="window.location.href='inicio_admin.html'">
+        <img src="image/casa.png">
+        <span>Inicio</span>
+      </div>
+
+      <!-- 👥 USUARIOS -->
+      <div class="menu-item" onclick="window.location.href='usuario.html'">
+        <img src="image/user.png">
+        <span>Usuarios</span>
+      </div>
+
+      <!-- 🧠 REGISTROS -->
+      <div class="menu-item" onclick="window.location.href='registros_emocionales_admin.html'">
+        <img src="image/registroemocional.png">
+        <span>Registros</span>
+      </div>
+
+      <!-- 📊 ESTADÍSTICAS -->
+      <div class="menu-item" onclick="window.location.href='estadisticas.html'">
+        <img src="image/grafica.png">
+        <span>Estadísticas</span>
+      </div>
+
+      <!-- 👑 ADMINS -->
+      <div class="menu-item" onclick="window.location.href='registrar_admins.html'">
+        <img src="image/admin.png">
+        <span>Admins</span>
+      </div>
+
+    </nav>
+
+    <!-- 👤 USUARIO -->
+    <div class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg">
+      <div>
+        <b id="nombreUser">Tu Nombre</b><br>
+        <small id="correoUser">tu@email.com</small>
+      </div>
+    </div>
+
+    <!-- 🔐 LOGOUT -->
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+
+  </aside>
+
+  <!-- ========================= -->
+  <!-- 🚀 SCRIPT -->
+  <!-- ========================= -->
+  <script src="app.js"></script>
+
+</body>
+</html>

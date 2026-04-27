@@ -9,32 +9,47 @@
 <body class="registro-body">
 
 <!-- SIDEBAR -->
-<aside class="registro-sidebar">
+  <aside class="sidebar">
+    <h2>
+      <img src="image/logo.png" alt="logo">
+      MoodCare
+    </h2>
 
-  <h2 class="registro-logo">
-    <img src="./image/logo.png">
-    MoodCare
-  </h2>
+    <nav id="menu">
+        <div class="menu-item" onclick="window.location.href='inicio.html'">
+        <img src="image/casa.png">
+        <span>Inicio</span>
+      </div>
 
-  <nav>
-    <div class="registro-menu" onclick="location.href='inicio.html'">
-      <img src="./image/casa.png"> Inicio
+      <div class="menu-item active">
+        <img src="image/chat.png">
+        <span>Chat</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='registro.html'">
+        <img src="image/registroemocional.png">
+        <span>Registro emocional</span>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='historial.html'">
+        <img src="image/historial.png">
+        <span>Historial</span>
+      </div>
+    </nav>
+
+    <!-- 👤 USUARIO -->
+    <div class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg">
+      <div>
+        <b id="nombreUser">Tu Nombre</b><br>
+        <small id="correoUser">tu@email.com</small>
+      </div>
     </div>
 
-    <div class="registro-menu" onclick="location.href='index.html'">
-      <img src="./image/chat.png"> Chat
-    </div>
+    <!-- 🔐 LOGOUT -->
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
 
-    <div class="registro-menu active">
-      <img src="./image/registroemocional.png"> Registro emocional
-    </div>
-
-    <div class="registro-menu" onclick="location.href='historial.html'">
-      <img src="./image/historial.png"> Historial
-    </div>
-  </nav>
-
-</aside>
+  </aside>
 
 <!-- MAIN -->
 <main class="registro-main">
@@ -103,6 +118,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="app.js"></script>
 
 </main>

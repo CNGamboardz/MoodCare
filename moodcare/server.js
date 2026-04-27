@@ -96,20 +96,31 @@ app.post("/register", upload.single("foto"), async (req, res) => {
   }
 });
 
-// =========================
-// 🔐 LOGIN (CON FOTO)
-// =========================
+// 🔥 LOGIN
 app.post("/login", async (req, res) => {
   const { correo, password } = req.body;
 
   try {
     const result = await pool.query(
-      `SELECT * FROM usuarios WHERE correo = $1`,
+      `
+      SELECT 
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.password_hash,
+        u.foto_perfil,
+        r.nombre AS rol
+      FROM usuarios u
+      LEFT JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+      LEFT JOIN roles r ON ur.id_rol = r.id_rol
+      WHERE u.correo = $1
+      LIMIT 1
+      `,
       [correo]
     );
 
     if (result.rows.length === 0) {
-      return res.json({ ok: false });
+      return res.json({ ok: false, msg: "Usuario no existe" });
     }
 
     const user = result.rows[0];
@@ -117,7 +128,7 @@ app.post("/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password_hash);
 
     if (!match) {
-      return res.json({ ok: false });
+      return res.json({ ok: false, msg: "Contraseña incorrecta" });
     }
 
     res.json({
@@ -126,13 +137,14 @@ app.post("/login", async (req, res) => {
         id: user.id_usuario,
         nombre: user.nombre,
         correo: user.correo,
-        foto: user.foto_perfil // 👈 IMPORTANTE
+        foto: user.foto_perfil,
+        rol: user.rol // 🔥 CLAVE
       }
     });
 
   } catch (error) {
     console.error(error);
-    res.json({ ok: false });
+    res.json({ ok: false, msg: "Error servidor" });
   }
 });
 
@@ -464,5 +476,56 @@ app.get("/api/dashboard/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error en dashboard" });
+  }
+});
+
+// =========================
+// 👑 OBTENER ADMINISTRADORES
+// =========================
+app.get("/admins", async (req, res) => {
+  try {
+
+    const result = await pool.query(`
+      SELECT 
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.foto_perfil,
+        u.creado_en
+      FROM usuarios u
+      JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+      JOIN roles r ON ur.id_rol = r.id_rol
+      WHERE r.nombre = 'admin'
+      ORDER BY u.creado_en DESC
+    `);
+
+    res.json(result.rows);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener administradores" });
+  }
+});
+
+
+// =========================
+// 🗑️ ELIMINAR ADMIN
+// =========================
+app.delete("/admins/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+
+    await pool.query(`
+      DELETE FROM usuarios_roles
+      WHERE id_usuario = $1
+      AND id_rol = '4eceb8c8-bcac-4cc0-b324-b0db81876287'
+    `, [id]);
+
+    res.json({ ok: true });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar admin" });
   }
 });
