@@ -535,7 +535,7 @@ function pintarTabla(data) {
     </tr>
   `;
 
-  data.slice(0,3).forEach(r => {
+  data.forEach(r => {
 
     const clase = (r.etiqueta || "neutral").toLowerCase();
 
@@ -598,7 +598,12 @@ function pintarGrafica(data) {
 
   const ultimos = data.slice(0,7).reverse();
 
-  const diasSemana = ["Lu", "Ma", "Mi", "Jue", "Vi", "Sa", "Do"];
+  const diasSemana = ["Do", "Lu", "Ma", "Mi", "Jue", "Vi", "Sa"];
+
+  const labels = ultimos.map(r => {
+    const fecha = new Date(r.creado_en);
+    return diasSemana[fecha.getDay()];
+  });
 
   const ctx = document.getElementById("grafica");
 
@@ -609,7 +614,7 @@ function pintarGrafica(data) {
   window.miGrafica = new Chart(ctx, {
     type: "line",
     data: {
-      labels: diasSemana, // 🔥 ahora sí salen los días
+      labels: labels, // 🔥 ahora sí salen los días
       datasets: [{
         data: ultimos.map(r => r.puntuacion),
         tension: 0.4,
@@ -687,6 +692,7 @@ function emoji(e) {
   if (e.includes("triste")) return "😢";
   if (e.includes("ansioso") || e.includes("ansiedad")) return "😟";
   if (e.includes("neutral")) return "😐";
+  if (e.includes("enojado") || e.includes("enojo")) return "😠";
 
   return "🙂";
 }
@@ -710,7 +716,8 @@ function getColor(e) {
   if (e.includes("ansiedad")) return "#D8CDB5";
   if (e.includes("triste")) return "#8E8773";
   if (e.includes("neutral")) return "#ccc";
-
+  if (e.includes("enojado")) return "#3D372A";
+  
   return "#ddd";
 }
 

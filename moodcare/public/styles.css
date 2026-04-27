@@ -1775,6 +1775,7 @@ canvas {
 .neutral { background: #f2c28b; }
 .ansiedad { background: #e5e1d8; }
 .triste { background: #c9c4b8; }
+.enojado { background: #3D372A; } 
 
 .cal-header {
   display: flex;
@@ -1970,3 +1971,60 @@ canvas {
   border-radius: 50%;
   padding: 8px;
 }
+
+.tabla-slider {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* hace que la tabla crezca */
+#tablaRegistros {
+  min-width: 700px;
+  border-collapse: collapse;
+}
+
+/* opcional: scroll bonito */
+.tabla-slider::-webkit-scrollbar {
+  height: px;
+}
+
+.tabla-slider::-webkit-scrollbar-thumb {
+  background: #c7bfb3;
+  border-radius: 1px;
+}
+
+.tabla-slider {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.tabla-slider {
+  overflow-x: auto;
+  white-space: nowrap;
+
+  /* 🔥 ocultar scroll por defecto */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* ocultar en Chrome */
+.tabla-slider::-webkit-scrollbar {
+  height: 0px;
+  transition: 0.3s;
+}
+
+/* 👇 cuando pasas el mouse */
+.tabla-slider:hover::-webkit-scrollbar {
+  height: 6px;
+}
+
+/* estilo del scroll */
+.tabla-slider::-webkit-scrollbar-thumb {
+  background: #c7bfb3;
+  border-radius: 10px;
+}
+
+/* tabla */
+#tablaRegistros {
+  min-width: 700px;
+}
+
