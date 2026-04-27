@@ -664,39 +664,63 @@ function pintarGrafica(data) {
 
   const ultimos = data.slice(0,7).reverse();
 
+  const diasSemana = ["Do", "Lu", "Ma", "Mi", "Jue", "Vi", "Sa"];
+
+  const labels = ultimos.map(r => {
+    const fecha = new Date(r.creado_en);
+    return diasSemana[fecha.getDay()];
+  });
+
   const ctx = document.getElementById("grafica");
 
-  new Chart(ctx, {
+  if (window.miGrafica) {
+    window.miGrafica.destroy();
+  }
+
+  window.miGrafica = new Chart(ctx, {
     type: "line",
     data: {
-      labels: ultimos.map(() => ""),
+      labels: labels, // 🔥 ahora sí salen los días
       datasets: [{
         data: ultimos.map(r => r.puntuacion),
         tension: 0.4,
+        borderWidth: 3,
         pointRadius: 0
       }]
     },
     options: {
-      plugins: { legend: { display: false } },
-      scales: { y: { min: 1, max: 10 } }
+      responsive: true,
+      maintainAspectRatio: false, // 🔥 para que ocupe toda la tarjeta
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        y: {
+          min: 1,
+          max: 10,
+        }
+      }
     },
     plugins: [{
       id: "emojiPlugin",
-      afterDraw(chart) {
+      afterDatasetsDraw(chart) {
 
         const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
 
-        chart.data.datasets[0].data.forEach((value, i) => {
+        meta.data.forEach((point, i) => {
 
-          const meta = chart.getDatasetMeta(0);
-          const x = meta.data[i].x;
-          const y = meta.data[i].y;
+          const emo = ultimos[i]?.etiqueta;
 
-          const emo = ultimos[i].etiqueta;
-
-          ctx.font = "20px Arial";
+          ctx.font = "30px Arial"; // 🔥 emoji más grande
           ctx.textAlign = "center";
-          ctx.fillText(emoji(emo), x, y - 10);
+          ctx.textBaseline = "middle";
+
+          ctx.fillText(
+            emoji(emo),
+            point.x,
+            point.y - 8
+          );
         });
       }
     }]
@@ -755,6 +779,129 @@ function getColor(e) {
   if (e.includes("neutral")) return "#ccc";
 
   return "#ddd";
+}
+
+
+function pintarRecomendaciones(data) {
+
+  const cont = document.getElementById("recomendaciones");
+  cont.innerHTML = "";
+
+  if (!data.length) return;
+
+  const ultima = data[0].etiqueta.toLowerCase();
+
+  let lista = [];
+
+  if (ultima.includes("feliz")) {
+    lista = [
+      {
+        icon: "🌞",
+        titulo: "Comparte tu alegría",
+        desc: "Habla con alguien y comparte tu buen momento"
+      },
+      {
+        icon: "🎵",
+        titulo: "Escucha música",
+        desc: "Refuerza tu estado positivo con tu playlist"
+      },
+      {
+        icon: "📸",
+        titulo: "Guarda el momento",
+        desc: "Toma una foto o escribe cómo te sientes"
+      }
+    ];
+  }
+
+  else if (ultima.includes("triste")) {
+    lista = [
+      {
+        icon: "🧘",
+        titulo: "Respirar profundo",
+        desc: "Te ayudará a relajar el estrés"
+      },
+      {
+        icon: "📓",
+        titulo: "Escribe lo que sientes",
+        desc: "Expresar emociones ayuda a liberarlas"
+      },
+      {
+        icon: "📞",
+        titulo: "Habla con alguien",
+        desc: "No tienes que sentirte sola"
+      }
+    ];
+  }
+
+  else if (ultima.includes("ansiedad") || ultima.includes("ansioso")) {
+    lista = [
+      {
+        icon: "🌬️",
+        titulo: "Respiración guiada",
+        desc: "Controla tu ritmo y calma tu mente"
+      },
+      {
+        icon: "🚶",
+        titulo: "Camina 10 minutos",
+        desc: "Mejora tu estado de ánimo"
+      },
+      {
+        icon: "📵",
+        titulo: "Desconéctate",
+        desc: "Reduce estímulos por un rato"
+      }
+    ];
+  }
+
+  else {
+    lista = [
+      {
+        icon: "🌿",
+        titulo: "Relájate",
+        desc: "Tómate un momento para ti"
+      },
+      {
+        icon: "💧",
+        titulo: "Hidrátate",
+        desc: "Tu cuerpo también necesita cuidado"
+      },
+      {
+        icon: "😌",
+        titulo: "Descansa",
+        desc: "Un pequeño descanso ayuda mucho"
+      }
+    ];
+  }
+
+  lista.forEach(r => {
+
+    const div = document.createElement("div");
+    div.className = "registro-reco-item";
+
+    div.innerHTML = `
+      <div class="reco-icon">${r.icon}</div>
+      <div class="reco-texto">
+        <span class="reco-titulo">${r.titulo}</span>
+        <span class="reco-desc">${r.desc}</span>
+      </div>
+    `;
+
+    cont.appendChild(div);
+  });
+}
+
+function obtenerIconoEstado(emocion) {
+
+  if (!emocion) return "./image/neutral.png";
+
+  emocion = emocion.toLowerCase();
+
+  if (emocion.includes("feliz")) return "./image/feliz.png";
+  if (emocion.includes("triste")) return "./image/triste.png";
+  if (emocion.includes("ansiedad") || emocion.includes("ansioso")) return "./image/ansiedad.png";
+  if (emocion.includes("neutral")) return "./image/neutral.png";
+
+  return "./image/neutral.png";
 }
 
 async function login() {
