@@ -2701,3 +2701,98 @@ canvas {
 .mc-toggle-eye:hover {
   opacity: 1;
 }
+
+.activo {
+  background: #e6f3ea;
+}
+
+.bloqueado {
+  background: #3D372A;
+  color: white;
+}
+
+/* CONTENEDOR */
+.users-container {
+  margin-left: 260px;
+  padding: 30px;
+}
+
+/* TARJETA */
+.users-table-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* TABLA */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  text-align: left;
+  padding: 12px;
+  color: #777;
+}
+
+.users-table td {
+  padding: 15px 10px;
+  border-top: 1px solid #eee;
+}
+
+/* USER */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 🔥 ESTO ARREGLA TU IMAGEN GIGANTE */
+.user-info img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* TEXTO */
+.user-info small {
+  display: block;
+  color: #888;
+  font-size: 12px;
+}
+
+/* BADGES */
+.badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.activo {
+  background: #e6f3ea;
+}
+
+.bloqueado {
+  background: #3D372A;
+  color: white;
+}
+
+/* BOTÓN */
+.btn-action {
+  border: none;
+  background: #9c8f7a;
+  color: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.users-footer {
+  margin-top: 10px;
+  color: #777;
+}

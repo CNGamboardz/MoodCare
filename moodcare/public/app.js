@@ -307,6 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarEstadoEmocional();
   cargarAdmins(); // 👈 ESTA LÍNEA NUEVA
   cargarHistorialUsuario();
+  cargarUsuarios();
 });
 
 /* ========================= */
@@ -1245,5 +1246,67 @@ function togglePassword() {
     input.type = "text";
   } else {
     input.type = "password";
+  }
+}
+
+async function cargarUsuarios() {
+
+  const tabla = document.getElementById("tablaUsuarios");
+  const contador = document.getElementById("contadorUsuarios");
+
+  if (!tabla) return;
+
+  try {
+
+    const res = await fetch("http://localhost:3000/usuarios");
+    const data = await res.json();
+
+    tabla.innerHTML = "";
+
+    data.forEach(user => {
+
+      let estadoTexto = "Activo";
+      let claseEstado = "activo";
+
+      if (user.id_estado_usuario == 2) {
+        estadoTexto = "Bloqueado";
+        claseEstado = "bloqueado";
+      }
+
+      tabla.innerHTML += `
+        <tr>
+
+          <td>
+            <div class="user-info">
+              <img src="uploads/${user.foto_perfil || 'user.jpg'}">
+              <div>
+                <b>${user.nombre}</b>
+                <small>${user.correo}</small>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <span class="badge ${claseEstado}">
+              ${estadoTexto}
+            </span>
+          </td>
+
+          <td>
+            ${new Date(user.creado_en).toLocaleDateString()}
+          </td>
+
+          <td>
+            <button class="btn-action">👁</button>
+          </td>
+
+        </tr>
+      `;
+    });
+
+    contador.innerText = `Mostrando ${data.length} usuarios`;
+
+  } catch (error) {
+    console.error(error);
   }
 }

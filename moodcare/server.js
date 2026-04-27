@@ -620,3 +620,26 @@ app.post("/register-admin", upload.single("foto"), async (req, res) => {
     client.release();
   }
 });
+
+app.get("/usuarios", async (req, res) => {
+  try {
+
+    const result = await pool.query(`
+      SELECT 
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.foto_perfil,
+        u.creado_en,
+        u.id_estado_usuario
+      FROM usuarios u
+      ORDER BY u.creado_en DESC
+    `);
+
+    res.json(result.rows);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error obteniendo usuarios" });
+  }
+});
