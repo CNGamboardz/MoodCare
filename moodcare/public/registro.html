@@ -44,24 +44,47 @@
 <!-- CARDS -->
 <div class="registro-top">
 
-  <div class="registro-card">
+  <!-- ESTADO -->
+  <div class="registro-card estado">
     <p>Estado emocional de hoy</p>
-    <h2 id="estadoHoy">--</h2>
+
+    <div class="estado-contenido">
+      <span id="emojiEstado"></span>
+      <h2 id="estadoHoy"></h2>
+    </div>
   </div>
 
-  <div class="registro-card">
-    <p>Puntuación emocional</p>
-    <h2 id="puntuacionHoy">--</h2>
+  <!-- PUNTUACION -->
+  <div class="registro-card icono">
+    <div class="icono-card">
+      <img src="./image/promedio.png">
+    </div>
+    <div>
+      <p>Puntuación emocional</p>
+      <h2 id="puntuacionHoy"></h2>
+    </div>
   </div>
 
-  <div class="registro-card">
-    <p>Registros por semana</p>
-    <h2 id="totalRegistros">--</h2>
+  <!-- REGISTROS -->
+  <div class="registro-card icono">
+    <div class="icono-card">
+      <img src="./image/calen.png">
+    </div>
+    <div>
+      <p>Registros por semana</p>
+      <h2 id="totalRegistros"></h2>
+    </div>
   </div>
 
-  <div class="registro-card">
-    <p>Último registro</p>
-    <h2 id="ultimoRegistro">--</h2>
+  <!-- ULTIMO -->
+  <div class="registro-card icono">
+    <div class="icono-card">
+      <img src="./image/calen.png">
+    </div>
+    <div>
+      <p>Último registro</p>
+      <h2 id="ultimoRegistro"></h2>
+    </div>
   </div>
 
 </div>
@@ -89,13 +112,21 @@
 
     <div class="registro-calendar-box">
       <h3>Registro emocional mensual</h3>
+  
       <div id="calendar"></div>
+      <div class="cal-legend">
+        <div><span class="dot feliz"></span> Feliz</div>
+        <div><span class="dot neutral"></span> Neutral</div>
+        <div><span class="dot ansiedad"></span> Ansiedad</div>
+        <div><span class="dot triste"></span> Triste</div>
+      </div>
+      <div id="detalleDia" class="detalle-dia"></div>
     </div>
+    
 
     <div class="registro-reco">
       <h4>Recomendaciones</h4>
-      <p>🧘 Respirar profundo 5 minutos</p>
-      <p>🚶 Caminar 10 minutos</p>
+      <div id="recomendaciones"></div>
     </div>
 
   </div>
