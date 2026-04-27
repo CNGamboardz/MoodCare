@@ -633,6 +633,8 @@ app.get("/usuarios", async (req, res) => {
         u.creado_en,
         u.id_estado_usuario
       FROM usuarios u
+      JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+      WHERE ur.id_rol = '1627982b-d587-476f-bc83-7b1ddcf3cc80'
       ORDER BY u.creado_en DESC
     `);
 
