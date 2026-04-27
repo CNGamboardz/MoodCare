@@ -510,7 +510,6 @@ const API = "http://localhost:3000/api/dashboard";
 const user = JSON.parse(localStorage.getItem("user"));
 const ID_USUARIO = user?.id;
 
-
 // 🔥 PRUEBA RÁPIDA (si falla login)
 if (!ID_USUARIO) {
   console.warn("No hay usuario, usando ID fijo");
@@ -557,12 +556,8 @@ function renderDashboard(data) {
 ========================= */
 function actualizarCards(ultimo, total) {
 
-  const emocion = ultimo.etiqueta;
-
-  document.getElementById("estadoHoy").innerText = emocion;
-
-  document.getElementById("emojiEstado").innerText =
-    emoji(emocion);
+  document.getElementById("estadoHoy").innerText =
+    `${emoji(ultimo.etiqueta)} ${ultimo.etiqueta}`;
 
   document.getElementById("puntuacionHoy").innerText =
     `${ultimo.puntuacion}/10`;
@@ -578,7 +573,6 @@ function actualizarCards(ultimo, total) {
    TABLA
 ========================= */
 function pintarTabla(data) {
-  pintarRecomendaciones(data);
 
   let html = `
     <tr>
@@ -589,16 +583,19 @@ function pintarTabla(data) {
     </tr>
   `;
 
-  data.forEach(r => {
-
-    const clase = (r.etiqueta || "neutral").toLowerCase();
-
+  data.slice(0,3).forEach(r => {
     html += `
       <tr>
         <td>${formatoFecha(r.creado_en)}</td>
         <td>${emoji(r.etiqueta)} ${r.etiqueta}</td>
         <td>
-          <div class="puntuacion ${clase}">
+          <div style="
+            background:#e7a27c;
+            padding:5px 10px;
+            border-radius:20px;
+            width:${r.puntuacion * 10}px;
+            text-align:center;
+          ">
             ${r.puntuacion}
           </div>
         </td>
@@ -609,40 +606,55 @@ function pintarTabla(data) {
 
   document.getElementById("tablaRegistros").innerHTML = html;
 }
+
 /* =========================
    CALENDARIO
 ========================= */
 function pintarCalendario(data) {
-  const cont = document.getElementById("calendar");
-  cont.innerHTML = "";
+
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
 
   const hoy = new Date();
   const mes = hoy.getMonth();
-  const anio = hoy.getFullYear();
+  const año = hoy.getFullYear();
 
-  const diasMes = new Date(anio, mes + 1, 0).getDate();
+  // 🔹 primer día del mes
+  const primerDia = new Date(año, mes, 1).getDay();
 
-  for (let i = 1; i <= diasMes; i++) {
+  // 🔹 total días del mes
+  const diasMes = new Date(año, mes + 1, 0).getDate();
+
+  // 🔹 mapa de emociones por día
+  const mapa = {};
+
+  data.forEach(r => {
+    const fecha = new Date(r.creado_en);
+
+    if (fecha.getMonth() === mes && fecha.getFullYear() === año) {
+      mapa[fecha.getDate()] = r.etiqueta;
+    }
+  });
+
+  // 🔹 espacios vacíos (alineación correcta)
+  for (let i = 0; i < primerDia; i++) {
+    const vacio = document.createElement("div");
+    calendar.appendChild(vacio);
+  }
+
+  // 🔹 días reales
+  for (let d = 1; d <= diasMes; d++) {
+
     const div = document.createElement("div");
     div.className = "dia";
-    div.innerText = i;
+    div.innerText = d;
 
-    // 🔥 buscar emoción de ese día
-    const registro = data.find(e => {
-      const fecha = new Date(e.creado_en);
-      return (
-        fecha.getDate() === i &&
-        fecha.getMonth() === mes &&
-        fecha.getFullYear() === anio
-      );
-    });
-
-    // 🎨 pintar color según emoción
-    if (registro) {
-      div.classList.add(registro.etiqueta.toLowerCase());
+    if (mapa[d]) {
+      div.style.background = getColor(mapa[d]);
+      div.style.color = "white";
     }
 
-    cont.appendChild(div);
+    calendar.appendChild(div);
   }
 }
 /* =========================
@@ -652,63 +664,39 @@ function pintarGrafica(data) {
 
   const ultimos = data.slice(0,7).reverse();
 
-  const diasSemana = ["Do", "Lu", "Ma", "Mi", "Jue", "Vi", "Sa"];
-
-  const labels = ultimos.map(r => {
-    const fecha = new Date(r.creado_en);
-    return diasSemana[fecha.getDay()];
-  });
-
   const ctx = document.getElementById("grafica");
 
-  if (window.miGrafica) {
-    window.miGrafica.destroy();
-  }
-
-  window.miGrafica = new Chart(ctx, {
+  new Chart(ctx, {
     type: "line",
     data: {
-      labels: labels, // 🔥 ahora sí salen los días
+      labels: ultimos.map(() => ""),
       datasets: [{
         data: ultimos.map(r => r.puntuacion),
         tension: 0.4,
-        borderWidth: 3,
         pointRadius: 0
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false, // 🔥 para que ocupe toda la tarjeta
-      plugins: {
-        legend: { display: false },
-      },
-      scales: {
-        y: {
-          min: 1,
-          max: 10,
-        }
-      }
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 1, max: 10 } }
     },
     plugins: [{
       id: "emojiPlugin",
-      afterDatasetsDraw(chart) {
+      afterDraw(chart) {
 
         const { ctx } = chart;
-        const meta = chart.getDatasetMeta(0);
 
-        meta.data.forEach((point, i) => {
+        chart.data.datasets[0].data.forEach((value, i) => {
 
-          const emo = ultimos[i]?.etiqueta;
+          const meta = chart.getDatasetMeta(0);
+          const x = meta.data[i].x;
+          const y = meta.data[i].y;
 
-          ctx.font = "30px Arial"; // 🔥 emoji más grande
+          const emo = ultimos[i].etiqueta;
+
+          ctx.font = "20px Arial";
           ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-
-          ctx.fillText(
-            emoji(emo),
-            point.x,
-            point.y - 8
-          );
+          ctx.fillText(emoji(emo), x, y - 10);
         });
       }
     }]
@@ -739,16 +727,11 @@ function mostrarVacio() {
 ========================= */
 function emoji(e) {
   if (!e) return "😐";
-
   e = e.toLowerCase();
-
-  if (e.includes("feliz")) return "😄";
+  if (e.includes("feliz")) return "😃";
   if (e.includes("triste")) return "😢";
-  if (e.includes("ansioso") || e.includes("ansiedad")) return "😟";
-  if (e.includes("neutral")) return "😐";
-  if (e.includes("enojado") || e.includes("enojo")) return "😠";
-
-  return "🙂";
+  if (e.includes("ansioso")) return "😟";
+  return "😐";
 }
 
 function formatoFecha(f) {
@@ -770,12 +753,10 @@ function getColor(e) {
   if (e.includes("ansiedad")) return "#D8CDB5";
   if (e.includes("triste")) return "#8E8773";
   if (e.includes("neutral")) return "#ccc";
-  if (e.includes("enojado")) return "#3D372A";
-  
+
   return "#ddd";
 }
 
-<<<<<<< HEAD
 async function login() {
   const correo = document.getElementById("correo").value;
   const password = document.getElementById("password").value;
@@ -973,126 +954,4 @@ async function eliminarAdmin(id) {
 /* ========================= */
 function editarAdmin(id) {
   console.log("Editar admin:", id);
-=======
-function pintarRecomendaciones(data) {
-
-  const cont = document.getElementById("recomendaciones");
-  cont.innerHTML = "";
-
-  if (!data.length) return;
-
-  const ultima = data[0].etiqueta.toLowerCase();
-
-  let lista = [];
-
-  if (ultima.includes("feliz")) {
-    lista = [
-      {
-        icon: "🌞",
-        titulo: "Comparte tu alegría",
-        desc: "Habla con alguien y comparte tu buen momento"
-      },
-      {
-        icon: "🎵",
-        titulo: "Escucha música",
-        desc: "Refuerza tu estado positivo con tu playlist"
-      },
-      {
-        icon: "📸",
-        titulo: "Guarda el momento",
-        desc: "Toma una foto o escribe cómo te sientes"
-      }
-    ];
-  }
-
-  else if (ultima.includes("triste")) {
-    lista = [
-      {
-        icon: "🧘",
-        titulo: "Respirar profundo",
-        desc: "Te ayudará a relajar el estrés"
-      },
-      {
-        icon: "📓",
-        titulo: "Escribe lo que sientes",
-        desc: "Expresar emociones ayuda a liberarlas"
-      },
-      {
-        icon: "📞",
-        titulo: "Habla con alguien",
-        desc: "No tienes que sentirte sola"
-      }
-    ];
-  }
-
-  else if (ultima.includes("ansiedad") || ultima.includes("ansioso")) {
-    lista = [
-      {
-        icon: "🌬️",
-        titulo: "Respiración guiada",
-        desc: "Controla tu ritmo y calma tu mente"
-      },
-      {
-        icon: "🚶",
-        titulo: "Camina 10 minutos",
-        desc: "Mejora tu estado de ánimo"
-      },
-      {
-        icon: "📵",
-        titulo: "Desconéctate",
-        desc: "Reduce estímulos por un rato"
-      }
-    ];
-  }
-
-  else {
-    lista = [
-      {
-        icon: "🌿",
-        titulo: "Relájate",
-        desc: "Tómate un momento para ti"
-      },
-      {
-        icon: "💧",
-        titulo: "Hidrátate",
-        desc: "Tu cuerpo también necesita cuidado"
-      },
-      {
-        icon: "😌",
-        titulo: "Descansa",
-        desc: "Un pequeño descanso ayuda mucho"
-      }
-    ];
-  }
-
-  lista.forEach(r => {
-
-    const div = document.createElement("div");
-    div.className = "registro-reco-item";
-
-    div.innerHTML = `
-      <div class="reco-icon">${r.icon}</div>
-      <div class="reco-texto">
-        <span class="reco-titulo">${r.titulo}</span>
-        <span class="reco-desc">${r.desc}</span>
-      </div>
-    `;
-
-    cont.appendChild(div);
-  });
-}
-
-function obtenerIconoEstado(emocion) {
-
-  if (!emocion) return "./image/neutral.png";
-
-  emocion = emocion.toLowerCase();
-
-  if (emocion.includes("feliz")) return "./image/feliz.png";
-  if (emocion.includes("triste")) return "./image/triste.png";
-  if (emocion.includes("ansiedad") || emocion.includes("ansioso")) return "./image/ansiedad.png";
-  if (emocion.includes("neutral")) return "./image/neutral.png";
-
-  return "./image/neutral.png";
->>>>>>> dd149e888b65c529dd10f9dce39e0b917a506d12
 }
