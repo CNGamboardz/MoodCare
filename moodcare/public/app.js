@@ -584,19 +584,16 @@ function pintarTabla(data) {
     </tr>
   `;
 
-  data.slice(0,3).forEach(r => {
+  data.forEach(r => {
+
+    const clase = (r.etiqueta || "neutral").toLowerCase();
+
     html += `
       <tr>
         <td>${formatoFecha(r.creado_en)}</td>
         <td>${emoji(r.etiqueta)} ${r.etiqueta}</td>
         <td>
-          <div style="
-            background:#e7a27c;
-            padding:5px 10px;
-            border-radius:20px;
-            width:${r.puntuacion * 10}px;
-            text-align:center;
-          ">
+          <div class="puntuacion ${clase}">
             ${r.puntuacion}
           </div>
         </td>
@@ -612,50 +609,37 @@ function pintarTabla(data) {
    CALENDARIO
 ========================= */
 function pintarCalendario(data) {
-
-  const calendar = document.getElementById("calendar");
-  calendar.innerHTML = "";
+  pintarRecomendaciones(data);
+  const cont = document.getElementById("calendar");
+  cont.innerHTML = "";
 
   const hoy = new Date();
   const mes = hoy.getMonth();
-  const año = hoy.getFullYear();
+  const anio = hoy.getFullYear();
 
-  // 🔹 primer día del mes
-  const primerDia = new Date(año, mes, 1).getDay();
+  const diasMes = new Date(anio, mes + 1, 0).getDate();
 
-  // 🔹 total días del mes
-  const diasMes = new Date(año, mes + 1, 0).getDate();
-
-  // 🔹 mapa de emociones por día
-  const mapa = {};
-
-  data.forEach(r => {
-    const fecha = new Date(r.creado_en);
-
-    if (fecha.getMonth() === mes && fecha.getFullYear() === año) {
-      mapa[fecha.getDate()] = r.etiqueta;
-    }
-  });
-
-  // 🔹 espacios vacíos (alineación correcta)
-  for (let i = 0; i < primerDia; i++) {
-    const vacio = document.createElement("div");
-    calendar.appendChild(vacio);
-  }
-
-  // 🔹 días reales
-  for (let d = 1; d <= diasMes; d++) {
-
+  for (let i = 1; i <= diasMes; i++) {
     const div = document.createElement("div");
     div.className = "dia";
-    div.innerText = d;
+    div.innerText = i;
 
-    if (mapa[d]) {
-      div.style.background = getColor(mapa[d]);
-      div.style.color = "white";
+    // 🔥 buscar emoción de ese día
+    const registro = data.find(e => {
+      const fecha = new Date(e.creado_en);
+      return (
+        fecha.getDate() === i &&
+        fecha.getMonth() === mes &&
+        fecha.getFullYear() === anio
+      );
+    });
+
+    // 🎨 pintar color según emoción
+    if (registro) {
+      div.classList.add(registro.etiqueta.toLowerCase());
     }
 
-    calendar.appendChild(div);
+    cont.appendChild(div);
   }
 }
 /* =========================

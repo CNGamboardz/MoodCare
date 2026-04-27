@@ -1723,6 +1723,10 @@ body.login-page {
   background: #c9c4b8 !important;
   color: #000;
 }
+.enojado {
+  background: #3D372A !important;
+  color: white;
+}
 
 /* ========================= */
 /* 📊 GRAFICA */
@@ -1842,6 +1846,10 @@ canvas {
 
 .triste {
   background: #8E8773;
+}
+.enojado {
+  background: #3D372A;
+  color: white;
 }
 
 .registro-reco p {
