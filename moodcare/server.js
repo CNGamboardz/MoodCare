@@ -574,3 +574,49 @@ app.get("/historial/:userId", async (req, res) => {
     res.status(500).json({ error: "Error en historial" });
   }
 });
+
+app.post("/register-admin", upload.single("foto"), async (req, res) => {
+  const { nombre, correo, password, fecha_nacimiento, telefono } = req.body;
+
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const hash = await bcrypt.hash(password, 10);
+    const foto = req.file ? req.file.filename : null;
+
+    // 1️⃣ Crear usuario
+    const result = await client.query(
+      `INSERT INTO usuarios 
+      (nombre, correo, password_hash, fecha_nacimiento, telefono, foto_perfil)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id_usuario`,
+      [nombre, correo, hash, fecha_nacimiento, telefono, foto]
+    );
+
+    const userId = result.rows[0].id_usuario;
+
+    // 🔥 ROL FIJO
+    const idRolAdmin = "4eceb8c8-bcac-4cc0-b324-b0db81876287";
+
+    // 2️⃣ Asignar rol admin directamente
+    await client.query(
+      `INSERT INTO usuarios_roles (id_usuario, id_rol)
+       VALUES ($1, $2)`,
+      [userId, idRolAdmin]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({ ok: true });
+
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error(error);
+    res.status(500).json({ ok: false });
+
+  } finally {
+    client.release();
+  }
+});

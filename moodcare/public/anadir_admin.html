@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Añadir Administrador</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body class="mc-admin-add-page">
+      <!-- LOGO -->
+  <div class="login-logo">
+    <img src="image/logo.png"><b>MoodCare</b> 
+  </div>
+
+  <div class="mc-admin-add-wrapper">
+
+    <div class="mc-admin-add-card">
+
+      <!-- HEADER -->
+      <div class="mc-admin-add-header">
+        <img src="image/admin.png" class="mc-admin-add-icon">
+        <div>
+          <h2>Registrar Administrador</h2>
+          <p>Agrega un nuevo administrador al sistema</p>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <form id="formAdmin" enctype="multipart/form-data">
+
+        <div class="mc-admin-add-grid">
+
+          <div class="mc-admin-add-group">
+            <label>Nombre Completo:</label>
+            <input type="text" name="nombre" required>
+          </div>
+
+          <div class="mc-admin-add-group">
+            <label>Correo electronico:</label>
+            <input type="email" name="correo" required>
+          </div>
+
+            <div class="mc-admin-add-group">
+            <label>Contraseña:</label>
+
+            <div class="mc-input-password">
+                <input type="password" id="passwordInput" name="password" required>
+
+                <span class="mc-toggle-eye" onclick="togglePassword()">
+                👁️
+                </span>
+            </div>
+            </div>
+
+          <div class="mc-admin-add-group">
+            <label>Fecha de nacimiento:</label>
+            <input type="date" name="fecha_nacimiento">
+          </div>
+
+            <div class="mc-admin-add-group">
+            <label>Teléfono:</label>
+            <input 
+                type="text" 
+                name="telefono"
+                maxlength="10"
+                pattern="\d{10}"
+                inputmode="numeric"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                placeholder="Ej. 9611234567"
+            >
+            </div>
+
+          <div class="mc-admin-add-group">
+            <label>Foto de perfil</label>
+            <input type="file" name="foto" accept="image/*">
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="mc-admin-add-actions">
+          <button type="button" class="mc-btn-cancel" onclick="window.location.href='adminis.html'">
+            Cancelar
+          </button>
+
+          <button type="submit" class="mc-btn-save">
+            Guardar administrador
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
