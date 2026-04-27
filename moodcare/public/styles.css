@@ -920,7 +920,7 @@ button:active {
 
   font-size: 12px;
 
-  flex-shrink: 0;
+  flex-shrink: 0; 
 }
 
 /* ========================= */
@@ -3424,3 +3424,255 @@ canvas {
   cursor: pointer;
 }
 
+/*INICIO NUEVA correcion*/
+
+body.inicio-page .calendario-card{
+  background:#a79f84 !important;
+  padding:20px 28px 18px 28px !important;
+  border-radius:28px !important;
+}
+
+/* título */
+body.inicio-page .calendario-card > span{
+  display:block !important;
+  text-align:left !important;
+  padding-left:6px !important;
+  margin-bottom:10px !important;
+  font-size:14px !important;
+  font-weight:500 !important;
+  color:#f5f1e8 !important;
+}
+
+/* header mes */
+body.inicio-page .cal-header{
+  display:grid !important;
+  grid-template-columns:38px 1fr 38px !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin-bottom:12px !important;
+}
+
+body.inicio-page .cal-header button{
+  width:38px !important;
+  height:38px !important;
+  border:none !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.15) !important;
+  color:#fff !important;
+  font-size:15px !important;
+  cursor:pointer !important;
+}
+
+body.inicio-page #mesActual{
+  text-align:center !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+  color:#fff !important;
+}
+
+/* CENTRAR TODO */
+body.inicio-page .dias,
+body.inicio-page .fechas{
+  width:88% !important;
+  margin:0 auto !important;
+}
+
+/* nombres días */
+body.inicio-page .dias{
+  margin-bottom:10px !important;
+}
+
+body.inicio-page .dias div{
+  font-size:13px !important;
+  font-weight:500 !important;
+  color:#eee8da !important;
+  text-align:center !important;
+}
+
+/* fechas */
+body.inicio-page .fechas{
+  display:grid !important;
+  grid-template-columns:repeat(7,1fr) !important;
+  row-gap:11px !important;
+  column-gap:6px !important;
+}
+
+body.inicio-page .fechas div{
+  width:26px !important;
+  height:26px !important;
+  margin:auto !important;
+  font-size:13px !important;
+  color:#fff !important;
+  border-radius:50% !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+/* día activo */
+body.inicio-page .fechas .activo{
+  background:#efb29f !important;
+  font-weight:600 !important;
+}
+
+/* leyenda */
+body.inicio-page .cal-legend{
+  width:95% !important;
+  margin:14px auto 0 auto !important;
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  gap:4px !important;
+}
+
+body.inicio-page .cal-legend div{
+  font-size:11px !important;
+  white-space:nowrap !important;
+  color:#fff !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:5px !important;
+}
+
+body.inicio-page .dot{
+  width:9px !important;
+  height:9px !important;
+  border-radius:50% !important;
+}
+
+body.inicio-page .dot.feliz{ background:#efb29f !important; }
+body.inicio-page .dot.neutral{ background:#f3c38b !important; }
+body.inicio-page .dot.ansiedad{ background:#f4f1e8 !important; }
+body.inicio-page .dot.triste{ background:#d6d2ca !important; }
+
+/* ========================= */
+/* TARJETAS BLANCAS */
+/* ========================= */
+
+body.inicio-page .emociones-card,
+body.inicio-page .chat-recientes,
+body.inicio-page .recomendaciones-card{
+  background:#ffffff !important;
+  border-radius:28px !important;
+}
+
+/* ========================= */
+/* GRID CORREGIDO */
+/* ========================= */
+
+body.inicio-page .dashboard{
+  display:grid !important;
+  grid-template-columns:2fr 1fr !important;
+  grid-template-rows:auto auto auto !important;
+  gap:22px !important;
+  align-items:start !important;
+}
+
+/* emociones */
+body.inicio-page .emociones-card{
+  min-height:120px !important;
+  height:120px !important;
+  padding:18px 24px !important;
+  overflow:hidden !important;
+}
+
+body.inicio-page #emocionesSemana{
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:flex-end !important;
+  width:100% !important;
+  height:55px !important;
+  margin-top:4px !important;
+  padding:0 14px !important;
+}
+
+body.inicio-page .dia-box{
+  width:34px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+}
+
+body.inicio-page .emoji-box{
+  height:24px !important;
+  font-size:20px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin-bottom:4px !important;
+}
+
+body.inicio-page .dia-box span{
+  font-size:12px !important;
+  line-height:1 !important;
+}
+
+/* chats recientes */
+/* ===== TEXTO PEGADO AL ICONO CHAT ===== */
+
+body.inicio-page .chat-item{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:14px !important;
+  padding:12px 0 !important;
+  border-bottom:1px solid #d8d3c8 !important;
+}
+
+body.inicio-page .chat-left{
+  display:flex !important;
+  align-items:center !important;
+  gap:14px !important;
+  flex:1 !important;
+}
+
+body.inicio-page .chat-icon{
+  flex-shrink:0 !important;
+}
+
+body.inicio-page .chat-msg{
+  display:block !important;
+  margin:0 !important;
+  padding:0 !important;
+  line-height:1.1 !important;
+  position:static !important;
+}
+
+body.inicio-page .chat-fecha{
+  margin-left:14px !important;
+  white-space:nowrap !important;
+}
+
+/* recomendaciones */
+body.inicio-page .recomendaciones-card{
+  min-height:340px !important;
+  padding:24px !important;
+  grid-column:2 !important;
+  grid-row:2 / span 2 !important;
+}
+
+
+/* ===== SOLO EN INICIO: SCROLL EN CONTENIDO, MENÚ FIJO ===== */
+
+body.inicio-page{
+  height:100vh !important;
+  overflow:hidden !important;
+}
+
+body.inicio-page .sidebar{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  width:265px !important;
+  height:100vh !important;
+  overflow:hidden !important;
+  z-index:1000 !important;
+}
+
+body.inicio-page .main{
+  margin-left:265px !important;
+  height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-bottom:40px !important;
+}

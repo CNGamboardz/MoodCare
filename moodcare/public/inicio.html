@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoodCare - Inicio</title>
+
+  <!-- CSS GENERAL -->
   <link rel="stylesheet" href="./styles.css">
+
+  <!-- CSS SOLO PARA INICIO -->
+  <link rel="stylesheet" href="./inicio_usuario.css">
 </head>
 
-<body>
+<body class="inicio-page">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
+
     <h2>
       <img src="image/logo.png">
       MoodCare
     </h2>
 
     <nav id="menu">
+
       <div class="menu-item active">
         <img src="image/casa.png">
         <span>Inicio</span>
@@ -36,11 +44,13 @@
         <img src="image/historial.png">
         <span>Historial</span>
       </div>
+
     </nav>
 
     <!-- USER -->
     <div class="user-box">
       <img id="fotoPerfil" src="image/user.jpg">
+
       <div>
         <b id="nombreUser">Usuario</b><br>
         <small id="correoUser"></small>
@@ -48,7 +58,10 @@
     </div>
 
     <!-- LOGOUT -->
-    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+    <button class="logout-btn" onclick="logout()">
+      Cerrar sesión
+    </button>
+
   </aside>
 
   <!-- MAIN -->
@@ -56,10 +69,13 @@
 
     <!-- SALUDO -->
     <div class="header-dashboard">
+
       <h1 id="saludo"></h1>
+
       <p class="segundosaludo">
         Bienvenida a MoodCare, aquí tienes un resumen de tu estado emocional
       </p>
+
     </div>
 
     <!-- DASHBOARD -->
@@ -67,26 +83,30 @@
 
       <!-- ESTADO -->
       <div class="card big">
+
         <h3>Estado emocional de hoy</h3>
 
         <div class="grafico grafico-estado">
 
           <!-- CÍRCULOS -->
           <div class="circle estado-circulo energia" id="energia">
-            0%<br><small>Energía emocional</small>
+            0%<br>
+            <small>Energía emocional</small>
           </div>
 
           <div class="circle estado-circulo ansiedad" id="ansiedad">
-            0%<br><small>Ansiedad</small>
+            0%<br>
+            <small>Ansiedad</small>
           </div>
 
           <div class="circle estado-circulo triste" id="triste">
-            0%<br><small>Bajo ánimo</small>
+            0%<br>
+            <small>Bajo ánimo</small>
           </div>
 
-          <!-- BARRAS -->
+          <!-- LEYENDA -->
           <div class="leyenda-estado">
-            
+
             <div class="item-leyenda">
               <div class="barra energia-bar"></div>
               <span>Energía emocional</span>
@@ -105,49 +125,98 @@
           </div>
 
         </div>
+
       </div>
 
-      <!-- 📅 CALENDARIO -->
+      <!-- CALENDARIO -->
       <div class="card calendario-card">
+
         <span>Registro Emocional Mensual</span>
-        <p></p>
 
         <div class="cal-header">
+
           <button onclick="cambiarMes(-1)">◀</button>
+
           <span id="mesActual">Mes</span>
+
           <button onclick="cambiarMes(1)">▶</button>
+
         </div>
 
+        <!-- DÍAS -->
         <div class="cal-grid dias">
-          <div>D</div><div>L</div><div>M</div><div>M</div>
-          <div>J</div><div>V</div><div>S</div>
+          <div>D</div>
+          <div>L</div>
+          <div>M</div>
+          <div>M</div>
+          <div>J</div>
+          <div>V</div>
+          <div>S</div>
         </div>
 
+        <!-- FECHAS -->
         <div class="cal-grid fechas" id="calendario"></div>
 
+        <!-- LEYENDA -->
         <div class="cal-legend">
-          <div><span class="dot feliz"></span> Feliz</div>
-          <div><span class="dot neutral"></span> Neutral</div>
-          <div><span class="dot ansiedad"></span> Ansiedad</div>
-          <div><span class="dot triste"></span> Triste</div>
+
+          <div>
+            <span class="dot feliz"></span>
+            Feliz
+          </div>
+
+          <div>
+            <span class="dot neutral"></span>
+            Neutral
+          </div>
+
+          <div>
+            <span class="dot ansiedad"></span>
+            Ansiedad
+          </div>
+
+          <div>
+            <span class="dot triste"></span>
+            Triste
+          </div>
+
         </div>
+
       </div>
 
-      <!-- EMOCIONES -->
-      <div class="card">
+      <!-- ULTIMAS EMOCIONES -->
+      <div class="card emociones-card">
+
         <h3>Últimas emociones</h3>
-        <div class="emociones">
+
+        <div class="emociones" id="emocionesSemana">
           😄 😢 😡 😌 😟 😴
         </div>
+
       </div>
 
       <!-- RECOMENDACIONES -->
-      <div class="card">
+      <div class="card recomendaciones-card">
+
         <h3>Recomendaciones de bienestar</h3>
+
         <div id="recomendaciones"></div>
+
+      </div>
+
+      <!-- CHATS RECIENTES -->
+      <div class="card chat-recientes">
+
+        <h3>Chats Recientes</h3>
+
+        <div id="chatsRecientes">
+
+        </div>
+
       </div>
 
     </div>
+
   </main>
 
   <script src="app.js"></script>

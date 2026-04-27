@@ -1473,3 +1473,179 @@ window.onclick = function(e) {
     modal.classList.remove("activo");
   }
 }
+
+/*Calendario de inicio*/
+/* ======================================
+   PINTAR CALENDARIO INICIO COMO REGISTRO
+====================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (!window.location.pathname.includes("inicio.html")) return;
+
+  setTimeout(async () => {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const calendario = document.getElementById("calendario");
+
+    if (!user || !calendario) return;
+
+    try {
+
+      const res = await fetch(`http://localhost:3000/api/dashboard/${user.id}`);
+      const data = await res.json();
+
+      const registros = data.registros || [];
+
+      const celdas = calendario.querySelectorAll("div");
+
+      celdas.forEach(celda => {
+
+        const diaTexto = celda.innerText.trim();
+
+        if (!diaTexto || isNaN(diaTexto)) return;
+
+        const diaNumero = parseInt(diaTexto);
+
+        const fechaVista = new Date(fechaActual);
+        const mes = fechaVista.getMonth();
+        const anio = fechaVista.getFullYear();
+
+        const encontrado = registros.find(r => {
+
+          const fecha = new Date(r.creado_en);
+
+          return (
+            fecha.getDate() === diaNumero &&
+            fecha.getMonth() === mes &&
+            fecha.getFullYear() === anio
+          );
+        });
+
+        if (encontrado) {
+          celda.classList.add(encontrado.etiqueta.toLowerCase());
+        }
+
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+
+  }, 300);
+
+});
+
+
+/* Emociones recientes semana */
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.location.pathname.includes("inicio.html")) {
+    cargarEmocionesSemana();
+  }
+
+});
+
+async function cargarEmocionesSemana() {
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const cont = document.getElementById("emocionesSemana");
+
+  if (!user || !cont) return;
+
+  try {
+
+    const res = await fetch(`http://localhost:3000/historial/${user.id}`);
+    const data = await res.json();
+
+    const dias = ["L","M","M","J","V","S","D"];
+
+    let html = `<div class="linea-semana"></div>`;
+
+    const hoy = new Date();
+
+    let diaNumero = hoy.getDay();
+    diaNumero = diaNumero === 0 ? 7 : diaNumero; // domingo = 7
+
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() - (diaNumero - 1));
+
+    for (let i = 0; i < 7; i++) {
+
+      const fecha = new Date(lunes);
+      fecha.setDate(lunes.getDate() + i);
+
+      const reg = data.find(r => {
+
+        const f = new Date(r.creado_en);
+
+        return (
+          f.getDate() === fecha.getDate() &&
+          f.getMonth() === fecha.getMonth() &&
+          f.getFullYear() === fecha.getFullYear()
+        );
+
+      });
+
+      const emo = reg ? emojiHistorial(reg.emocion) : "";
+
+      html += `
+        <div class="dia-box">
+          <div class="emoji-box">${emo}</div>
+          <span>${dias[i]}</span>
+        </div>
+      `;
+    }
+
+    cont.innerHTML = html;
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+
+
+/*CHATS RECIENTES INICIO*/
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.location.pathname.includes("inicio.html")) {
+    cargarChatsRecientes();
+  }
+
+});
+
+function cargarChatsRecientes(){
+
+  const cont = document.getElementById("chatsRecientes");
+  if(!cont) return;
+
+  cont.innerHTML = `
+  
+    <div class="chat-item">
+      <div class="chat-left">
+        <div class="chat-icon">💬</div>
+        <div class="chat-text">¿Cómo te sientes hoy?</div>
+      </div>
+      <div class="chat-time">Hoy</div>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-left">
+        <div class="chat-icon">💬</div>
+        <div class="chat-text">Detecto algo de estrés</div>
+      </div>
+      <div class="chat-time">Ayer</div>
+    </div>
+
+    <div class="chat-item">
+      <div class="chat-left">
+        <div class="chat-icon">💬</div>
+        <div class="chat-text">¿Quieres respirar conmigo?</div>
+      </div>
+      <div class="chat-time">Lunes</div>
+    </div>
+
+  `;
+}
