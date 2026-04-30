@@ -6,11 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoodCare - Inicio</title>
 
-  <!-- CSS GENERAL -->
   <link rel="stylesheet" href="./styles.css">
-
-  <!-- CSS SOLO PARA INICIO -->
-  <link rel="stylesheet" href="./inicio_usuario.css">
 </head>
 
 <body class="inicio-page">
@@ -18,49 +14,63 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
 
-    <h2>
-      <img src="image/logo.png">
-      MoodCare
-    </h2>
+    <header>
+      <h2>
+        <img src="image/logo.png" alt="logo">
+        MoodCare
+      </h2>
+    </header>
 
     <nav id="menu">
+      <ul>
 
-      <div class="menu-item active">
-        <img src="image/casa.png">
-        <span>Inicio</span>
-      </div>
+        <li class="menu-item active">
+          <button onclick="window.location.href='inicio.html'">
+            <img src="image/casa.png" alt="">
+            <span>Inicio</span>
+          </button>
+        </li>
 
-      <div class="menu-item" onclick="window.location.href='index.html'">
-        <img src="image/chat.png">
-        <span>Chat</span>
-      </div>
+        <li class="menu-item">
+          <button onclick="window.location.href='index.html'">
+            <img src="image/chat.png" alt="">
+            <span>Chat</span>
+          </button>
+        </li>
 
-      <div class="menu-item" onclick="window.location.href='registro.html'">
-        <img src="image/registroemocional.png">
-        <span>Registro emocional</span>
-      </div>
+        <li class="menu-item">
+          <button onclick="window.location.href='registro.html'">
+            <img src="image/registroemocional.png" alt="">
+            <span>Registro emocional</span>
+          </button>
+        </li>
 
-      <div class="menu-item" onclick="window.location.href='historial.html'">
-        <img src="image/historial.png">
-        <span>Historial</span>
-      </div>
+        <li class="menu-item">
+          <button onclick="window.location.href='historial.html'">
+            <img src="image/historial.png" alt="">
+            <span>Historial</span>
+          </button>
+        </li>
 
+      </ul>
     </nav>
 
     <!-- USER -->
-    <div class="user-box">
-      <img id="fotoPerfil" src="image/user.jpg">
+    <section class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg" alt="Foto de perfil">
 
-      <div>
-        <b id="nombreUser">Usuario</b><br>
+      <p>
+        <strong id="nombreUser">Usuario</strong><br>
         <small id="correoUser"></small>
-      </div>
-    </div>
+      </p>
+    </section>
 
     <!-- LOGOUT -->
-    <button class="logout-btn" onclick="logout()">
-      Cerrar sesión
-    </button>
+    <footer>
+      <button class="logout-btn" onclick="logout()">
+        Cerrar sesión
+      </button>
+    </footer>
 
   </aside>
 
@@ -68,154 +78,124 @@
   <main class="main">
 
     <!-- SALUDO -->
-    <div class="header-dashboard">
-
+    <header class="header-dashboard">
       <h1 id="saludo"></h1>
 
       <p class="segundosaludo">
         Bienvenida a MoodCare, aquí tienes un resumen de tu estado emocional
       </p>
-
-    </div>
+    </header>
 
     <!-- DASHBOARD -->
-    <div class="dashboard">
+    <section class="dashboard">
 
       <!-- ESTADO -->
-      <div class="card big">
+      <article class="card big">
 
         <h3>Estado emocional de hoy</h3>
 
-        <div class="grafico grafico-estado">
+        <section class="grafico grafico-estado">
 
-          <!-- CÍRCULOS -->
-          <div class="circle estado-circulo energia" id="energia">
+          <p class="circle estado-circulo energia" id="energia">
             0%<br>
             <small>Energía emocional</small>
-          </div>
+          </p>
 
-          <div class="circle estado-circulo ansiedad" id="ansiedad">
+          <p class="circle estado-circulo ansiedad" id="ansiedad">
             0%<br>
             <small>Ansiedad</small>
-          </div>
+          </p>
 
-          <div class="circle estado-circulo triste" id="triste">
+          <p class="circle estado-circulo triste" id="triste">
             0%<br>
             <small>Bajo ánimo</small>
-          </div>
+          </p>
 
-          <!-- LEYENDA -->
-          <div class="leyenda-estado">
+          <ul class="leyenda-estado">
 
-            <div class="item-leyenda">
-              <div class="barra energia-bar"></div>
+            <li class="item-leyenda">
+              <span class="barra energia-bar"></span>
               <span>Energía emocional</span>
-            </div>
+            </li>
 
-            <div class="item-leyenda">
-              <div class="barra ansiedad-bar"></div>
+            <li class="item-leyenda">
+              <span class="barra ansiedad-bar"></span>
               <span>Ansiedad</span>
-            </div>
+            </li>
 
-            <div class="item-leyenda">
-              <div class="barra triste-bar"></div>
+            <li class="item-leyenda">
+              <span class="barra triste-bar"></span>
               <span>Triste</span>
-            </div>
+            </li>
 
-          </div>
+          </ul>
 
-        </div>
+        </section>
 
-      </div>
+      </article>
 
       <!-- CALENDARIO -->
-      <div class="card calendario-card">
+      <article class="card calendario-card">
 
-        <span>Registro Emocional Mensual</span>
+        <header>
+          <h3>Registro Emocional Mensual</h3>
+        </header>
 
-        <div class="cal-header">
-
+        <nav class="cal-header">
           <button onclick="cambiarMes(-1)">◀</button>
-
           <span id="mesActual">Mes</span>
-
           <button onclick="cambiarMes(1)">▶</button>
-
-        </div>
+        </nav>
 
         <!-- DÍAS -->
-        <div class="cal-grid dias">
-          <div>D</div>
-          <div>L</div>
-          <div>M</div>
-          <div>M</div>
-          <div>J</div>
-          <div>V</div>
-          <div>S</div>
-        </div>
+        <ul class="cal-grid dias">
+          <li>D</li><li>L</li><li>M</li><li>M</li>
+          <li>J</li><li>V</li><li>S</li>
+        </ul>
 
         <!-- FECHAS -->
-        <div class="cal-grid fechas" id="calendario"></div>
+        <ul class="cal-grid fechas" id="calendario"></ul>
 
         <!-- LEYENDA -->
-        <div class="cal-legend">
+        <footer class="cal-legend">
+          <p><span class="dot feliz"></span> Feliz</p>
+          <p><span class="dot neutral"></span> Neutral</p>
+          <p><span class="dot ansiedad"></span> Ansiedad</p>
+          <p><span class="dot triste"></span> Triste</p>
+        </footer>
 
-          <div>
-            <span class="dot feliz"></span>
-            Feliz
-          </div>
+      </article>
 
-          <div>
-            <span class="dot neutral"></span>
-            Neutral
-          </div>
-
-          <div>
-            <span class="dot ansiedad"></span>
-            Ansiedad
-          </div>
-
-          <div>
-            <span class="dot triste"></span>
-            Triste
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- ULTIMAS EMOCIONES -->
-      <div class="card emociones-card">
+      <!-- EMOCIONES -->
+      <article class="card emociones-card">
 
         <h3>Últimas emociones</h3>
 
-        <div class="emociones" id="emocionesSemana">
+        <p class="emociones" id="emocionesSemana">
           😄 😢 😡 😌 😟 😴
-        </div>
+        </p>
 
-      </div>
+      </article>
 
       <!-- RECOMENDACIONES -->
-      <div class="card recomendaciones-card">
+      <article class="card recomendaciones-card">
 
         <h3>Recomendaciones de bienestar</h3>
 
-        <div id="recomendaciones"></div>
+        <ul id="recomendaciones"></ul>
 
-      </div>
+      </article>
 
-      <!-- CHATS RECIENTES -->
-      <div class="card chat-recientes">
+      <!-- CHATS -->
+      <article class="card chat-recientes">
 
         <h3>Chats Recientes</h3>
 
-        <div id="chatsRecientes">
+        <ul id="chatsRecientes"></ul>
 
-        </div>
+      </article>
 
-      </div>
-
-    </div>
+    </section>
 
   </main>
 
