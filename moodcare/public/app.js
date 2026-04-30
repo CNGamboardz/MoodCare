@@ -29,14 +29,14 @@ function verificarSesion() {
   // =========================
   // 🚀 REDIRECCIÓN INICIAL (SOLO INDEX)
   // =========================
-  if (paginaActual === "" || paginaActual === "index.html") {
-    if (esAdmin) {
-      window.location.replace("inicio_admin.html");
-    } else {
-      window.location.replace("inicio.html");
-    }
-    return;
+if (paginaActual === "") {
+  if (esAdmin) {
+    window.location.replace("inicio_admin.html");
+  } else {
+    window.location.replace("inicio.html");
   }
+  return;
+}
 
   // =========================
   // 🧭 PÁGINAS
@@ -297,6 +297,7 @@ function toggleMic() {
 /* INICIALIZACIÓN */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", () => {
+  verificarSesion(); // 🔥 CLAVE
   renderMenu(); // 🔥 ESTA ES LA CLAVE
   activarMenu();
   mostrarUsuario();
