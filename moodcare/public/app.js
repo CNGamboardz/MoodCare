@@ -1339,13 +1339,7 @@ async function cargarUsuarios() {
           <button
             class="btn-action"
 
-            onclick="mostrarPerfilUsuario(
-              '${user.nombre}',
-              '${user.correo}',
-              '${user.foto_perfil || "user.jpg"}',
-              '${new Date(user.creado_en).toLocaleDateString()}',
-              '${puntuacion}'
-            )">
+             onclick="verPerfilUsuario('${user.id_usuario}')">
 
             <img
               src="/image/verperfil.png"
@@ -1816,3 +1810,120 @@ function ocultarPerfil(){
   document.getElementById("ventanaPerfil").style.display =
     "none";
 }
+
+
+
+
+async function verPerfilUsuario(id) {
+
+  try {
+
+    const res = await fetch(`http://localhost:3000/usuario/${id}`);
+    const data = await res.json();
+
+    const user = data.usuario;
+
+    // 👤 DATOS
+    document.getElementById("perfilNombre").innerText =
+      user.nombre;
+
+    document.getElementById("perfilCorreo").innerText =
+      user.correo;
+
+    document.getElementById("perfilFoto").src =
+      "uploads/" + user.foto_perfil;
+
+    document.getElementById("perfilFecha").innerText =
+      new Date(user.creado_en).toLocaleDateString();
+
+    document.getElementById("perfilIndice").innerText =
+      data.indice;
+
+    const tabla = document.getElementById("tablaPerfilEmociones");
+
+    tabla.innerHTML = "";
+
+    data.historial.forEach(item => {
+
+      let emoji = "😐";
+      let clase = "score-medio";
+
+      // 🔥 EMOJIS
+      if (item.etiqueta === "feliz") emoji = "😍";
+      if (item.etiqueta === "triste") emoji = "😢";
+      if (item.etiqueta === "ansioso") emoji = "😣";
+      if (item.etiqueta === "enojado") emoji = "😡";
+      if (item.etiqueta === "neutral") emoji = "😐";
+
+      // 🔥 COLORES
+      const emocion = item.etiqueta.toLowerCase();
+
+      if (emocion === "feliz") {
+        clase = "score-feliz";
+      }
+
+      else if (emocion === "neutral") {
+        clase = "score-neutral";
+      }
+
+      else if (emocion === "ansioso") {
+        clase = "score-ansioso";
+      }
+
+      else if (emocion === "triste") {
+        clase = "score-triste";
+      }
+
+      else if (emocion === "enojado") {
+        clase = "score-enojado";
+      }
+
+      tabla.innerHTML += `
+
+        <div class="perfil-row">
+
+          <div class="emocion-col">
+            ${emoji} ${item.etiqueta}
+          </div>
+
+          <div>
+            <span class="score-pill ${clase}">
+              ${item.puntuacion}
+            </span>
+          </div>
+
+          <div>
+            ${item.nota || "-"}
+          </div>
+
+          <div>
+            ${new Date(item.creado_en)
+              .toLocaleDateString()}
+          </div>
+
+        </div>
+
+      `;
+    });
+
+
+    // 🔥 MOSTRAR MODAL
+    document.getElementById("ventanaPerfil")
+      .classList.add("active");
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function ocultarPerfil() {
+  const modal = document.getElementById("ventanaPerfil");
+  modal.classList.remove("active");
+}
+
+window.addEventListener("click", (e) => {
+  const modal = document.getElementById("ventanaPerfil");
+  if (e.target === modal) {
+    modal.classList.remove("active");
+  }
+});

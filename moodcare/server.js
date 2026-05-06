@@ -729,3 +729,57 @@ app.get("/usuarios", async (req, res) => {
     res.status(500).json({ error: "Error obteniendo usuarios" });
   }
 });
+
+app.get("/usuario/:id", async (req, res) => {
+
+  const { id } = req.params;
+
+  try {
+
+    // 👤 DATOS USUARIO
+    const usuario = await pool.query(`
+      SELECT
+        id_usuario,
+        nombre,
+        correo,
+        foto_perfil,
+        creado_en,
+        id_estado_usuario
+      FROM usuarios
+      WHERE id_usuario = $1
+    `, [id]);
+
+    // 🧠 HISTORIAL EMOCIONAL
+    const historial = await pool.query(`
+      SELECT
+        etiqueta,
+        puntuacion,
+        nota,
+        creado_en
+      FROM registros_estado_animo
+      WHERE id_usuario = $1
+      ORDER BY creado_en DESC
+      LIMIT 5
+    `, [id]);
+
+    // 📊 PROMEDIO EMOCIONAL
+    const promedio = await pool.query(`
+      SELECT AVG(puntuacion) AS promedio
+      FROM registros_estado_animo
+      WHERE id_usuario = $1
+    `, [id]);
+
+    res.json({
+      usuario: usuario.rows[0],
+      historial: historial.rows,
+      indice: Math.round(promedio.rows[0].promedio || 0)
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error obteniendo usuario"
+    });
+  }
+
+});

@@ -4105,7 +4105,9 @@ button {
 }
 
 .contenido-perfil{
-    width: 380px;
+
+    width: 500px;
+    max-width: 95%;
 
     background: white;
 
@@ -4176,11 +4178,138 @@ button {
 }
 
 .perfil-box{
-    background: #f7f4ef;
-
-    padding: 14px;
-
+    background: #ffffff;
+    padding: 10px;
     border-radius: 18px;
+    margin-bottom: 0px;
+}
 
-    margin-bottom: 12px;
+.ventana-perfil {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.ventana-perfil.active {
+  display: flex;
+}
+
+/* ========================= */
+/* TABLA PERFIL */
+/* ========================= */
+
+.perfil-tabla {
+  margin-top: 20px;
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* HEAD */
+.perfil-head {
+  background: #e9e2d8;
+  border-radius: 20px;
+
+  display: grid;
+  grid-template-columns: 1.3fr .9fr 1.5fr .9fr;
+  gap: 15px;
+  padding: 12px 18px;
+
+  font-size: 13px;
+  color: #8c8376;
+  font-weight: 500;
+
+  margin-bottom: 10px;
+}
+
+/* FILAS */
+.perfil-row {
+
+  display: grid;
+
+  grid-template-columns: 1.3fr .9fr 1.5fr .9fr;
+
+  gap: 15px;
+
+  align-items: center;
+
+  padding: 14px 10px;
+
+  border-bottom: 1px solid #eee;
+
+  font-size: 14px;
+
+  word-break: break-word;
+}
+
+/* EMOCIÓN */
+.emocion-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* CAPSULAS */
+.score-pill {
+
+  min-width: 50px;
+  height: 28px;
+
+  border-radius: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  margin: auto;
+}
+
+/* COLORES */
+/* FELIZ */
+.score-feliz {
+  background: #d8a28f;
+}
+
+/* NEUTRAL */
+.score-neutral {
+  background: #e6ad73;
+}
+
+/* ANSIOSO */
+.score-ansioso {
+  background: #ddd4c8;
+  color: #5f574a;
+}
+
+/* TRISTE */
+.score-triste {
+  background: #9c927c;
+}
+
+/* ENOJADO */
+.score-enojado {
+  background: #4e4738;
+}
+/* SCROLL BONITO */
+.perfil-tabla::-webkit-scrollbar {
+  width: 6px;
+}
+
+.perfil-tabla::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.perfil-tabla::-webkit-scrollbar-thumb {
+  background: #c7bcac;
+  border-radius: 20px;
 }
