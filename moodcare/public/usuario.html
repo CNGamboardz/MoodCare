@@ -229,11 +229,61 @@
             </div>
           </div>
 
+
+
+
+
+
+          <!-- =========================
+     VENTANA PERFIL
+========================= -->
+<div id="ventanaPerfil" class="ventana-perfil">
+
+  <div class="contenido-perfil">
+
+    <button
+      class="cerrar-perfil"
+      onclick="ocultarPerfil()">
+
+      ✕
+
+    </button>
+
+    <img
+      id="perfilFoto"
+      src="image/user.jpg"
+      alt="Perfil">
+
+    <h2 id="perfilNombre">
+      Usuario
+    </h2>
+
+    <p id="perfilCorreo">
+      correo@gmail.com
+    </p>
+
+    <div class="perfil-box">
+      <strong>Fecha registro:</strong>
+      <span id="perfilFecha"></span>
+    </div>
+
+    <div class="perfil-box">
+      <strong>Índice emocional:</strong>
+      <span id="perfilIndice"></span>
+    </div>
+
+  </div>
+
+</div>
+
+
+
   <!-- ========================= -->
   <!-- 🚀 SCRIPT -->
   <!-- ========================= -->
-    <script src="app.obf.js"></script>
 
+      <script src="app.js"></script>
+      
   <!-- 🔥 ACTIVAR MENÚ AUTOMÁTICO -->
   <script>
     const pagina = window.location.pathname.split("/").pop();
@@ -252,6 +302,8 @@
       }
     });
   </script>
+
+
 
 
 

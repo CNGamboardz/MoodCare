@@ -1335,7 +1335,24 @@ async function cargarUsuarios() {
         </td>
 
         <td>
-          <button class="btn-action">👁</button>
+
+          <button
+            class="btn-action"
+
+            onclick="mostrarPerfilUsuario(
+              '${user.nombre}',
+              '${user.correo}',
+              '${user.foto_perfil || "user.jpg"}',
+              '${new Date(user.creado_en).toLocaleDateString()}',
+              '${puntuacion}'
+            )">
+
+            <img
+              src="/image/verperfil.png"
+              alt="Ver perfil">
+
+          </button>
+
         </td>
 
       </tr>
@@ -1758,4 +1775,44 @@ async function cargarActividadAdmin() {
 // ejecutar solo inicio admin
 if (window.location.pathname.includes("inicio_admin.html")) {
   cargarActividadAdmin();
+}
+
+
+// =========================
+// ABRIR PERFIL
+// =========================
+function mostrarPerfilUsuario(
+  nombre,
+  correo,
+  foto,
+  fecha,
+  puntuacion
+){
+
+  document.getElementById("perfilNombre").innerText =
+    nombre;
+
+  document.getElementById("perfilCorreo").innerText =
+    correo;
+
+  document.getElementById("perfilFoto").src =
+    `uploads/${foto}`;
+
+  document.getElementById("perfilFecha").innerText =
+    fecha;
+
+  document.getElementById("perfilIndice").innerText =
+    puntuacion;
+
+  document.getElementById("ventanaPerfil").style.display =
+    "flex";
+}
+
+// =========================
+// CERRAR PERFIL
+// =========================
+function ocultarPerfil(){
+
+  document.getElementById("ventanaPerfil").style.display =
+    "none";
 }

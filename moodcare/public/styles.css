@@ -4063,3 +4063,124 @@ button {
 .barra {
   display: inline-block;
 }
+
+.btn-action{
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: #8b7b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-action img{
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+/* =========================
+   VENTANA PERFIL
+========================= */
+
+.ventana-perfil{
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,0.45);
+
+    backdrop-filter: blur(4px);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 99999;
+}
+
+.contenido-perfil{
+    width: 380px;
+
+    background: white;
+
+    border-radius: 30px;
+
+    padding: 30px;
+
+    position: relative;
+
+    animation: aparecerPerfil .2s ease;
+}
+
+@keyframes aparecerPerfil{
+
+    from{
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cerrar-perfil{
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    border: none;
+
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    background: #eee;
+}
+
+.contenido-perfil img{
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    display: block;
+
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.contenido-perfil h2{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.contenido-perfil p{
+    text-align: center;
+    color: #777;
+
+    margin-bottom: 20px;
+}
+
+.perfil-box{
+    background: #f7f4ef;
+
+    padding: 14px;
+
+    border-radius: 18px;
+
+    margin-bottom: 12px;
+}
