@@ -591,27 +591,77 @@ app.get("/admins", async (req, res) => {
   }
 });
 
+// =========================
+// 🗑️ QUITAR ADMIN Y VOLVER USUARIO
+// =========================
+app.put("/admins/:id/remove", async (req, res) => {
 
-// =========================
-// 🗑️ ELIMINAR ADMIN
-// =========================
-app.delete("/admins/:id", async (req, res) => {
   const { id } = req.params;
+
+  // UUID ADMIN
+  const idRolAdmin =
+    "4eceb8c8-bcac-4cc0-b324-b0db81876287";
+
+  // UUID USUARIO
+  const idRolUsuario =
+    "1627982b-d587-476f-bc83-7b1ddcf3cc80";
+
+  const client = await pool.connect();
 
   try {
 
-    await pool.query(`
-      DELETE FROM usuarios_roles
-      WHERE id_usuario = $1
-      AND id_rol = '4eceb8c8-bcac-4cc0-b324-b0db81876287'
-    `, [id]);
+    await client.query("BEGIN");
 
-    res.json({ ok: true });
+    // 🔥 ELIMINAR TODOS LOS ROLES ACTUALES
+    await client.query(
+      `
+      DELETE FROM usuarios_roles
+      WHERE id_usuario = $1::uuid
+      `,
+      [id]
+    );
+
+    // 🔥 ASIGNAR ROL USUARIO
+    await client.query(
+      `
+      INSERT INTO usuarios_roles
+      (
+        id_usuario,
+        id_rol
+      )
+      VALUES
+      (
+        $1::uuid,
+        $2::uuid
+      )
+      `,
+      [id, idRolUsuario]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({
+      ok: true,
+      message: "Administrador convertido en usuario"
+    });
 
   } catch (error) {
+
+    await client.query("ROLLBACK");
+
     console.error(error);
-    res.status(500).json({ error: "Error al eliminar admin" });
+
+    res.status(500).json({
+      ok: false,
+      error: error.message
+    });
+
+  } finally {
+
+    client.release();
+
   }
+
 });
 
 app.get("/historial/:userId", async (req, res) => {

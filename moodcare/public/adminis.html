@@ -73,9 +73,9 @@
           <input type="text" id="buscadorAdmins" placeholder="Buscar usuario...">
         </div>
 
-    <button class="admin-btn-add" onclick="window.location.href='anadir_admin.html'">
-      Añadir administrador
-    </button>
+        <button class="admin-btn-add" onclick="window.location.href='anadir_admin.html'">
+          Añadir administrador
+        </button>
       </div>
     </div>
 
@@ -110,10 +110,90 @@
 
   </main>
 
-  <!-- ========================= -->
-  <!-- 🚀 SCRIPT -->
-  <!-- ========================= -->
-      <script src="app.js"></script>
+<!-- ========================= -->
+<!-- 🚀 SCRIPT -->
+<!-- ========================= -->
+<script src="app.js"></script>
+
+<script>
+
+  // =========================
+  // 🔍 BUSCADOR ADMINS
+  // =========================
+  document.getElementById("buscadorAdmins")
+  .addEventListener("input", function () {
+
+    const filtro = this.value.toLowerCase();
+
+    const filas =
+      document.querySelectorAll("#tablaAdmins tr");
+
+    filas.forEach(fila => {
+
+      const texto =
+        fila.innerText.toLowerCase();
+
+      fila.style.display =
+        texto.includes(filtro)
+        ? ""
+        : "none";
+
+    });
+
+  });
+
+  // =========================
+  // 🗑️ QUITAR ADMIN
+  // =========================
+  async function eliminarAdmin(id) {
+
+    const confirmar = confirm(
+      "¿Deseas quitar permisos de administrador?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+      const response = await fetch(
+        `/admins/${id}/remove`,
+        {
+          method: "PUT"
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+      if (data.ok) {
+
+        alert("Administrador convertido en usuario");
+
+        // 🔄 RECARGAR TABLA
+        location.reload();
+
+      } else {
+
+        // 🔥 MOSTRAR ERROR REAL
+        alert(data.error);
+
+        console.error(data);
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      // 🔥 MOSTRAR ERROR REAL
+      alert(error);
+
+    }
+
+  }
+
+</script>
 
 </body>
 </html>
