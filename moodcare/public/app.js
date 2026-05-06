@@ -1295,8 +1295,9 @@ async function cargarUsuarios() {
     if (claseEstado === "bloqueado") countBloqueados++;
 
     // 🔥 PUNTUACIÓN (ejemplo)
-    const puntuacion = Math.floor(Math.random() * 100);
-
+      const puntuacion =
+        parseInt(user.promedio_emocional) || 0;
+        
     let claseScore = "bajo";
 
     if (puntuacion >= 80) claseScore = "alto";

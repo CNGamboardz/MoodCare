@@ -821,6 +821,7 @@ app.post("/register-admin", upload.single("foto"), async (req, res) => {
 });
 
 app.get("/usuarios", async (req, res) => {
+
   try {
 
     const result = await pool.query(`
@@ -830,19 +831,46 @@ app.get("/usuarios", async (req, res) => {
         u.correo,
         u.foto_perfil,
         u.creado_en,
-        u.id_estado_usuario
+        u.id_estado_usuario,
+
+        COALESCE(
+          ROUND((AVG(r.puntuacion) / 10.0) * 100),
+          0
+        ) AS promedio_emocional
+
       FROM usuarios u
-      JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
+
+      JOIN usuarios_roles ur
+      ON u.id_usuario = ur.id_usuario
+
+      LEFT JOIN registros_estado_animo r
+      ON u.id_usuario = r.id_usuario
+
       WHERE ur.id_rol = '1627982b-d587-476f-bc83-7b1ddcf3cc80'
+
+      GROUP BY
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.foto_perfil,
+        u.creado_en,
+        u.id_estado_usuario
+
       ORDER BY u.creado_en DESC
     `);
 
     res.json(result.rows);
 
   } catch (error) {
+
     console.error(error);
-    res.status(500).json({ error: "Error obteniendo usuarios" });
+
+    res.status(500).json({
+      error: "Error obteniendo usuarios"
+    });
+
   }
+
 });
 
 app.get("/usuario/:id", async (req, res) => {
@@ -877,11 +905,15 @@ app.get("/usuario/:id", async (req, res) => {
       LIMIT 5
     `, [id]);
 
-    // 📊 PROMEDIO EMOCIONAL
+    // 📊 PROMEDIO EMOCIONAL DEL USUARIO
     const promedio = await pool.query(`
-      SELECT AVG(puntuacion) AS promedio
+      SELECT
+        COALESCE(
+          ROUND((AVG(puntuacion) / 10.0) * 100),
+          0
+        ) AS promedio
       FROM registros_estado_animo
-      WHERE id_usuario = $1
+      WHERE id_usuario = $1::uuid
     `, [id]);
 
     res.json({

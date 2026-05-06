@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,188 +13,221 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <h2>
-      <img src="image/logo.png" alt="logo">
-      MoodCare
-    </h2>
 
+    <!-- HEADER -->
+    <header>
+      <h2>
+        <img src="image/logo.png" alt="logo">
+        MoodCare
+      </h2>
+    </header>
+
+    <!-- NAV -->
     <nav id="menu">
 
       <div class="menu-item" onclick="window.location.href='./inicio_admin.html'">
-        <img src="image/casa.png">
+        <img src="image/casa.png" alt="">
         <span>Inicio</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='./usuario.html'">
-        <img src="image/user.png">
+        <img src="image/user.png" alt="">
         <span>Usuarios</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='./registros_emocionales_admin.html'">
-        <img src="image/registroemocional.png">
+        <img src="image/registroemocional.png" alt="">
         <span>Registros</span>
       </div>
 
       <div class="menu-item" onclick="window.location.href='./estadisticas.html'">
-        <img src="image/grafica.png">
+        <img src="image/grafica.png" alt="">
         <span>Estadísticas</span>
       </div>
 
       <div class="menu-item active">
-        <img src="image/admin.png">
+        <img src="image/admin.png" alt="">
         <span>Admins</span>
       </div>
 
     </nav>
 
-    <!-- 👤 USUARIO -->
-    <div class="user-box">
-      <img id="fotoPerfil" src="image/user.jpg">
+    <!-- USUARIO -->
+    <section class="user-box">
+      <img id="fotoPerfil" src="image/user.jpg" alt="Foto perfil">
+
       <div>
         <b id="nombreUser">Tu Nombre</b><br>
         <small id="correoUser">tu@email.com</small>
       </div>
-    </div>
+    </section>
 
-    <!-- 🔐 LOGOUT -->
-    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+    <!-- FOOTER -->
+    <footer>
+      <button class="logout-btn" onclick="logout()">
+        Cerrar sesión
+      </button>
+    </footer>
 
   </aside>
 
-  <!-- ========================= -->
-  <!-- 📊 CONTENIDO PRINCIPAL -->
-  <!-- ========================= -->
+  <!-- CONTENIDO -->
   <main class="admin-content">
 
-    <div class="admin-header">
+    <!-- HEADER -->
+    <header class="admin-header">
+
       <h1>Lista de administradores</h1>
 
       <div class="admin-top-bar">
-        <div class="admin-search-box">
-          <input type="text" id="buscadorAdmins" placeholder="Buscar usuario...">
-        </div>
 
-        <button class="admin-btn-add" onclick="window.location.href='anadir_admin.html'">
+        <!-- SEARCH -->
+        <search class="admin-search-box">
+          <input
+            type="text"
+            id="buscadorAdmins"
+            placeholder="Buscar usuario..."
+            aria-label="Buscar administrador"
+          >
+        </search>
+
+        <button
+          class="admin-btn-add"
+          onclick="window.location.href='anadir_admin.html'"
+        >
           Añadir administrador
         </button>
-      </div>
-    </div>
 
-    <div class="admin-card">
+      </div>
+
+    </header>
+
+    <!-- TABLA -->
+    <section class="admin-card">
 
       <table class="admin-tabla">
+
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Registro</th>
-            <th>Acciones</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Registro</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
 
-        <!-- 🔥 AQUÍ SE INSERTAN LOS DATOS -->
+        <!-- DATOS -->
         <tbody id="tablaAdmins"></tbody>
 
       </table>
 
-      <div class="admin-footer">
-        <span id="contadorAdmins">Mostrando 0 administradores</span>
+      <!-- FOOTER -->
+      <footer class="admin-footer">
 
-        <div class="admin-paginacion">
-          <button>‹</button>
+        <span id="contadorAdmins">
+          Mostrando 0 administradores
+        </span>
+
+        <nav class="admin-paginacion">
+
+          <button aria-label="Anterior">‹</button>
+
           <span class="active">1</span>
-          <button>›</button>
-        </div>
-      </div>
 
-    </div>
+          <button aria-label="Siguiente">›</button>
+
+        </nav>
+
+      </footer>
+
+    </section>
 
   </main>
 
-<!-- ========================= -->
-<!-- 🚀 SCRIPT -->
-<!-- ========================= -->
-<script src="app.js"></script>
+  <!-- SCRIPT -->
+  <script src="app.js"></script>
 
-<script>
+  <script>
 
-  // =========================
-  // 🔍 BUSCADOR ADMINS
-  // =========================
-  document.getElementById("buscadorAdmins")
-  .addEventListener("input", function () {
+    // =========================
+    // 🔍 BUSCADOR ADMINS
+    // =========================
+    document.getElementById("buscadorAdmins")
+    .addEventListener("input", function () {
 
-    const filtro = this.value.toLowerCase();
+      const filtro = this.value.toLowerCase();
 
-    const filas =
-      document.querySelectorAll("#tablaAdmins tr");
+      const filas =
+        document.querySelectorAll("#tablaAdmins tr");
 
-    filas.forEach(fila => {
+      filas.forEach(fila => {
 
-      const texto =
-        fila.innerText.toLowerCase();
+        const texto =
+          fila.innerText.toLowerCase();
 
-      fila.style.display =
-        texto.includes(filtro)
-        ? ""
-        : "none";
+        fila.style.display =
+          texto.includes(filtro)
+          ? ""
+          : "none";
+
+      });
 
     });
 
-  });
+    // =========================
+    // 🗑️ QUITAR ADMIN
+    // =========================
+    async function eliminarAdmin(id) {
 
-  // =========================
-  // 🗑️ QUITAR ADMIN
-  // =========================
-  async function eliminarAdmin(id) {
-
-    const confirmar = confirm(
-      "¿Deseas quitar permisos de administrador?"
-    );
-
-    if (!confirmar) return;
-
-    try {
-
-      const response = await fetch(
-        `/admins/${id}/remove`,
-        {
-          method: "PUT"
-        }
+      const confirmar = confirm(
+        "¿Deseas quitar permisos de administrador?"
       );
 
-      const data = await response.json();
+      if (!confirmar) return;
 
-      console.log(data);
+      try {
 
-      if (data.ok) {
+        const response = await fetch(
+          `/admins/${id}/remove`,
+          {
+            method: "PUT"
+          }
+        );
 
-        alert("Administrador convertido en usuario");
+        const text =
+          await response.text();
 
-        // 🔄 RECARGAR TABLA
-        location.reload();
+        console.log(text);
 
-      } else {
+        const data =
+          JSON.parse(text);
 
-        // 🔥 MOSTRAR ERROR REAL
-        alert(data.error);
+        if (data.ok) {
 
-        console.error(data);
+          alert(
+            "Administrador convertido en usuario"
+          );
+
+          location.reload();
+
+        } else {
+
+          alert(data.error);
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(error);
 
       }
 
-    } catch (error) {
-
-      console.error(error);
-
-      // 🔥 MOSTRAR ERROR REAL
-      alert(error);
-
     }
 
-  }
-
-</script>
+  </script>
 
 </body>
+
 </html>
