@@ -297,8 +297,8 @@ function toggleMic() {
 /* INICIALIZACIÓN */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  verificarSesion(); // 🔥 CLAVE
-  renderMenu(); // 🔥 ESTA ES LA CLAVE
+  verificarSesion(); 
+  renderMenu(); 
   activarMenu();
   mostrarUsuario();
   mostrarSaludo(); 
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCalendario();
   cargarRecomendaciones();
   cargarEstadoEmocional();
-  cargarAdmins(); // 👈 ESTA LÍNEA NUEVA
+  cargarAdmins();
   cargarHistorialUsuario();
   cargarUsuarios();
 });

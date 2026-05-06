@@ -660,49 +660,114 @@ app.get("/historial/:userId", async (req, res) => {
 });
 
 app.post("/register-admin", upload.single("foto"), async (req, res) => {
+
   const { nombre, correo, password, fecha_nacimiento, telefono } = req.body;
 
   const client = await pool.connect();
 
   try {
+
+    // INICIAR TRANSACCIÓN
     await client.query("BEGIN");
 
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    // ENCRIPTAR PASSWORD
     const hash = await bcrypt.hash(password, 10);
+
+    // FOTO
     const foto = req.file ? req.file.filename : null;
 
-    // 1️⃣ Crear usuario
+    // INSERTAR USUARIO
     const result = await client.query(
-      `INSERT INTO usuarios 
-      (nombre, correo, password_hash, fecha_nacimiento, telefono, foto_perfil)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING id_usuario`,
-      [nombre, correo, hash, fecha_nacimiento, telefono, foto]
+      `
+      INSERT INTO usuarios
+      (
+        nombre,
+        correo,
+        password_hash,
+        fecha_nacimiento,
+        telefono,
+        foto_perfil
+      )
+      VALUES
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6
+      )
+      RETURNING id_usuario
+      `,
+      [
+        nombre,
+        correo,
+        hash,
+        fecha_nacimiento,
+        telefono,
+        foto
+      ]
     );
 
+    // ID DEL NUEVO USUARIO
     const userId = result.rows[0].id_usuario;
 
-    // 🔥 ROL FIJO
+    console.log("ID USUARIO:", userId);
+
+    // UUID DEL ROL ADMIN
     const idRolAdmin = "4eceb8c8-bcac-4cc0-b324-b0db81876287";
 
-    // 2️⃣ Asignar rol admin directamente
+    // INSERTAR ROL ADMIN
     await client.query(
-      `INSERT INTO usuarios_roles (id_usuario, id_rol)
-       VALUES ($1, $2)`,
-      [userId, idRolAdmin]
+      `
+      INSERT INTO usuarios_roles
+      (
+        id_usuario,
+        id_rol
+      )
+      VALUES
+      (
+        $1::uuid,
+        $2::uuid
+      )
+      `,
+      [
+        userId,
+        idRolAdmin
+      ]
     );
 
+    // CONFIRMAR
     await client.query("COMMIT");
 
-    res.json({ ok: true });
+    res.json({
+      ok: true,
+      message: "Administrador registrado correctamente"
+    });
 
   } catch (error) {
+
+    // CANCELAR SI FALLA
     await client.query("ROLLBACK");
+
+    console.error("ERROR REGISTER ADMIN:");
     console.error(error);
-    res.status(500).json({ ok: false });
+
+    res.status(500).json({
+      ok: false,
+      error: error.message,
+      detail: error.detail
+    });
 
   } finally {
+
     client.release();
+
   }
+
 });
 
 app.get("/usuarios", async (req, res) => {
