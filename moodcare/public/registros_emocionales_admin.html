@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoodCare</title>
+
+  <title>Registros emocionales</title>
 
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -12,53 +14,204 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
+
     <h2>
       <img src="image/logo.png" alt="logo">
       MoodCare
     </h2>
 
-       <nav id="menu">
-        <div class="menu-item" onclick="window.location.href='./inicio_admin.html'">
-            <img src="image/casa.png">
-            <span>Inicio</span>
-        </div>
+    <nav id="menu">
 
-      <div class="menu-item" onclick="window.location.href='./usuario.html'">
-            <img src="image/user.png">
-            <span>Usuarios</span>
-        </div>
+      <div class="menu-item"
+        onclick="window.location.href='./inicio_admin.html'">
+
+        <img src="image/casa.png">
+        <span>Inicio</span>
+
+      </div>
+
+      <div class="menu-item"
+        onclick="window.location.href='./usuario.html'">
+
+        <img src="image/user.png">
+        <span>Usuarios</span>
+
+      </div>
 
       <div class="menu-item active">
-            <img src="image/registroemocional.png">
-            <span>Registros</span>
-        </div>
 
-      <div class="menu-item" onclick="window.location.href='./estadisticas.html'">
-            <img src="image/grafica.png">
-            <span>Estadísticas</span>
-        </div>
+        <img src="image/registroemocional.png">
+        <span>Registros</span>
 
-      <div class="menu-item" onclick="window.location.href='./registrar_admins..html'">
-            <img src="image/admin.png">
-            <span>Admins</span>
-        </div>
+      </div>
 
-        </nav>
+      <div class="menu-item"
+        onclick="window.location.href='./estadisticas.html'">
 
-    <!-- 👤 USUARIO -->
+        <img src="image/grafica.png">
+        <span>Estadísticas</span>
+
+      </div>
+
+      <div class="menu-item"
+        onclick="window.location.href='./registrar_admins.html'">
+
+        <img src="image/admin.png">
+        <span>Admins</span>
+
+      </div>
+
+    </nav>
+
+    <!-- 👤 USER -->
     <div class="user-box">
+
       <img id="fotoPerfil" src="image/user.jpg">
+
       <div>
         <b id="nombreUser">Tu Nombre</b><br>
         <small id="correoUser">tu@email.com</small>
       </div>
+
     </div>
 
-    <!-- 🔐 LOGOUT -->
-    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+    <!-- 🔐 -->
+    <button
+      class="logout-btn"
+      onclick="logout()">
+
+      Cerrar sesión
+
+    </button>
 
   </aside>
 
+  <!-- ================================= -->
+  <!-- CONTENIDO -->
+  <!-- ================================= -->
+
+  <main class="registros-container">
+
+    <!-- TITULO -->
+    <h1>Registros Emocionales</h1>
+
+    <!-- 🔍 BUSCADOR -->
+    <div class="users-topbar">
+
+      <input
+        type="text"
+        placeholder="Buscar usuario..."
+        id="buscarRegistro">
+
+    </div>
+
+    <!-- 📊 CARDS -->
+    <div class="users-cards">
+
+      <!-- TOTAL -->
+      <div class="card active">
+
+        <div class="card-header">
+
+          <img src="image/usu.png">
+
+          <span>Total de registros</span>
+
+        </div>
+
+        <h2 id="totalRegistros">0</h2>
+
+      </div>
+
+      <!-- HOY -->
+      <div class="card white">
+
+        <div class="card-header">
+
+          <img src="image/calen.png">
+
+          <span>Hoy</span>
+
+        </div>
+
+        <h2 id="registrosHoy">0</h2>
+
+      </div>
+
+      <!-- PROMEDIO -->
+      <div class="card white">
+
+        <div class="card-header">
+
+          <img src="image/promedio.png">
+
+          <span>Promedio emocional</span>
+
+        </div>
+
+        <h2 id="promedioGeneral">0</h2>
+
+      </div>
+
+      <!-- BAJO -->
+      <div class="card white">
+
+        <div class="card-header">
+
+          <img src="image/bajorendi.png">
+
+          <span>Bajo estado</span>
+
+        </div>
+
+        <h2 id="usuariosBajos">0</h2>
+
+      </div>
+
+    </div>
+
+    <!-- 📋 TABLA -->
+    <div class="users-table-card">
+
+      <!-- 📋 TABLA -->
+<div class="users-table-card">
+
+  <table class="users-table">
+
+    <thead>
+
+      <tr>
+
+        <th>Nombre</th>
+        <th>Emoción</th>
+        <th>Puntuación</th>
+        <th>Nota</th>
+        <th>Fecha</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="tablaRegistrosAdmin"></tbody>
+
+  </table>
+
+  <div class="users-footer">
+
+    <span id="contadorRegistros"></span>
+
+  </div>
+
+</div>
+
+  </main>
+
+  <!-- SCRIPT -->
+  <script src="app.js"></script>
+
+</body>
+
+</html>
   <!-- ========================= -->
   <!-- 🚀 SCRIPT -->
   <!-- ========================= -->
