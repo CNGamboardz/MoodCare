@@ -930,3 +930,89 @@ app.get("/usuario/:id", async (req, res) => {
   }
 
 });
+/*REGISTROS EMOCIONALES CON DATOS DE USUARIO (PARA ADMIN)*/   
+app.get("/registros-emocionales", async (req, res) => {
+
+  try {
+
+    const result = await pool.query(`
+
+      SELECT DISTINCT ON (u.id_usuario)
+
+        u.id_usuario,
+        u.nombre,
+        u.correo,
+        u.foto_perfil,
+
+        r.etiqueta,
+        r.nota,
+        r.creado_en,
+
+        ROUND(
+          AVG(r.puntuacion)
+          OVER(PARTITION BY u.id_usuario)
+        ) AS puntuacion
+
+      FROM usuarios u
+
+      JOIN registros_estado_animo r
+      ON u.id_usuario = r.id_usuario
+
+      ORDER BY
+        u.id_usuario,
+        r.creado_en DESC
+
+    `);
+
+    // 🔥 TOTAL REGISTROS
+    const totalRegistros = result.rows.length;
+
+    // 🔥 REGISTROS HOY
+    const hoy = new Date().toLocaleDateString();
+
+    const registrosHoy = result.rows.filter(r => {
+
+      const fecha = new Date(r.creado_en)
+        .toLocaleDateString();
+
+      return fecha === hoy;
+
+    }).length;
+
+    // 🔥 PROMEDIO GENERAL
+    const suma = result.rows.reduce((acc, item) => {
+      return acc + Number(item.puntuacion);
+    }, 0);
+
+    const promedioGeneral = result.rows.length > 0
+      ? (suma / result.rows.length).toFixed(1)
+      : 0;
+
+    // 🔥 USUARIOS EN BAJO ESTADO
+    const usuariosBajos = result.rows.filter(r =>
+      Number(r.puntuacion) <= 3
+    ).length;
+
+    // 🚀 RESPUESTA
+    res.json({
+
+      registros: result.rows,
+
+      totalRegistros,
+      registrosHoy,
+      promedioGeneral,
+      usuariosBajos
+
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      error: "Error obteniendo registros"
+    });
+
+  }
+
+});
