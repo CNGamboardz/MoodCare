@@ -1930,6 +1930,7 @@ window.addEventListener("click", (e) => {
   }
 });
 
+<<<<<<< HEAD
 async function cargarRegistrosEmocionales() {
 
   const tabla = document.getElementById("tablaRegistrosAdmin");
@@ -2086,3 +2087,12 @@ if (buscadorRegistro) {
   });
 
 }
+=======
+
+
+
+
+
+
+
+>>>>>>> d4c0ae4d0d1aa5eed864f2fa91e53bcff0dd0888

@@ -2726,16 +2726,22 @@ canvas {
 
 /* TARJETA */
 .users-table-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
+  padding: 0;
+  margin-top: 20px;
+} box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 
 /* TABLA */
 .users-table {
+
   width: 100%;
+
   border-collapse: collapse;
+
+  background: white;
+
+  border-radius: 30px;
+
+  overflow: hidden;
 }
 
 .users-table th {
@@ -4313,6 +4319,7 @@ button {
   background: #c7bcac;
   border-radius: 20px;
 }
+<<<<<<< HEAD
 
 
 
@@ -4702,3 +4709,5 @@ button {
     font-size: 30px;
   }
 }
+=======
+>>>>>>> d4c0ae4d0d1aa5eed864f2fa91e53bcff0dd0888

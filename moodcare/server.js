@@ -930,6 +930,7 @@ app.get("/usuario/:id", async (req, res) => {
   }
 
 });
+<<<<<<< HEAD
 /*REGISTROS EMOCIONALES CON DATOS DE USUARIO (PARA ADMIN)*/   
 app.get("/registros-emocionales", async (req, res) => {
 
@@ -1016,3 +1017,6 @@ app.get("/registros-emocionales", async (req, res) => {
   }
 
 });
+=======
+
+>>>>>>> d4c0ae4d0d1aa5eed864f2fa91e53bcff0dd0888
