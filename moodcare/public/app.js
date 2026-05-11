@@ -181,14 +181,21 @@ async function enviarMensaje() {
   main.classList.add("chat-activo");
   chatContainer.classList.add("active");
 
-  chat.innerHTML += `<div class="msg-user">${mensaje}</div>`;
+  // Mostrar chat-header, ocultar bienvenida
+  const chatHeader = document.querySelector(".chat-header");
+  if (chatHeader) chatHeader.style.display = "flex";
+
+  chat.innerHTML += `<div class="msg-user-row"><div class="msg-user">${mensaje}</div></div>`;
   input.value = "";
 
   const typingId = "typing-" + Date.now();
 
   chat.innerHTML += `
-    <div class="msg-bot" id="${typingId}">
-      MoodCare está escribiendo...
+    <div class="msg-bot-row" id="row-${typingId}">
+      <img src="image/logo.png" alt="MoodCare" class="msg-bot-avatar">
+      <div class="msg-bot" id="${typingId}">
+        MoodCare está escribiendo...
+      </div>
     </div>
   `;
 
@@ -224,7 +231,7 @@ async function enviarMensaje() {
     }
 
   } catch (error) {
-    chat.innerHTML += `<div class="msg-bot">Error 😢</div>`;
+    chat.innerHTML += `<div class="msg-bot-row"><img src="image/logo.png" class="msg-bot-avatar"><div class="msg-bot">Error 😢</div></div>`;
   }
 
   chat.scrollTop = chat.scrollHeight;

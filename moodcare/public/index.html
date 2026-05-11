@@ -63,37 +63,54 @@
 
     <section class="chat-center" id="chatUI">
 
+      <!-- Bienvenida (se oculta al chatear) -->
       <header>
         <h1><strong>MoodCare</strong> Assistant</h1>
         <p>¿Cómo te sientes el día de hoy?</p>
       </header>
 
+      <!-- Header visible durante el chat -->
+      <div class="chat-header" style="display:none;">
+        <img src="image/logo.png" alt="logo" style="width:28px;height:28px;border-radius:50%;">
+        <span>MoodCare</span>
+      </div>
+
+      <!-- Contenedor de mensajes -->
+      <section class="chat-container" id="chatContainer">
+        <article id="chat"></article>
+      </section>
+
+      <!-- Input pill fijo -->
       <section class="input-wrapper">
-        <input 
-          id="mensaje" 
-          placeholder="Escribe cómo te sientes..." 
-          onkeypress="if(event.key === 'Enter'){ enviarMensaje(); }"
-        />
+        <div class="input-pill">
+          <input
+            id="mensaje"
+            placeholder="¿Cómo te sientes el día de hoy?"
+            onkeypress="if(event.key === 'Enter'){ enviarMensaje(); }"
+          />
+          <div class="input-actions">
+            <button id="btnClip" title="Adjuntar archivo">
+              <img src="image/adjunto-archivo.png" alt="Adjuntar">
+            </button>
 
-        <div class="input-actions">
-          <button id="btnMic" onclick="toggleMic()">
-            <img src="image/dictado de voz.png" alt="Micrófono">
-          </button>
+            <button id="btnMic" onclick="toggleMic()" title="Dictado de voz">
+              <img src="image/dictado de voz.png" alt="Micrófono">
+            </button>
 
-          <button id="btnVoz" onclick="toggleVoz()">🔊</button>
+            <button id="btnVoz" onclick="toggleVoz()" title="Voz">🔊</button>
 
-          <button onclick="enviarMensaje()">➤</button>
+            <button id="btnEnviar" onclick="enviarMensaje()" title="Enviar">
+              <img src="image/flecha.png" alt="Enviar">
+            </button>
+          </div>
         </div>
       </section>
 
+      <!-- Opciones rapidas -->
       <section class="quick-options">
         <button class="option" onclick="fill('Estoy triste')">😢 Estoy triste</button>
         <button class="option" onclick="fill('Me siento feliz')">😊 Me siento feliz</button>
         <button class="option" onclick="fill('Tengo ansiedad')">😟 Tengo ansiedad</button>
-      </section>
-
-      <section class="chat-container" id="chatContainer">
-        <article id="chat"></article>
       </section>
 
     </section>
