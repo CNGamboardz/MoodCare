@@ -6,6 +6,337 @@ function fill(text) {
   if (input) input.value = text;
 }
 
+/* ======================================================= */
+/* 📄 DESCARGAR CHAT COMO PDF — REPORTE PREMIUM            */
+/* ======================================================= */
+function descargarChatPDF() {
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const nombre = user.nombre || "Usuario";
+  const correo = user.correo || "—";
+  const fotoPerfil = user.foto ? `uploads/${user.foto}` : "image/user.jpg";
+
+  // ── Recolectar mensajes del DOM ──────────────────────────
+  const chatEl = document.getElementById("chat");
+  if (!chatEl || chatEl.innerHTML.trim() === "") {
+    alert("¡Aún no hay mensajes en esta conversación!");
+    return;
+  }
+
+  const ahora = new Date();
+  const fechaStr = ahora.toLocaleDateString("es-MX", {
+    year: "numeric", month: "long", day: "numeric"
+  });
+  const horaStr = ahora.toLocaleTimeString("es-MX", {
+    hour: "2-digit", minute: "2-digit"
+  });
+
+  // Extraer mensajes
+  let mensajesHTML = "";
+  const filas = chatEl.querySelectorAll(".msg-user-row, .msg-bot-row");
+
+  filas.forEach(fila => {
+    if (fila.classList.contains("msg-user-row")) {
+      const texto = fila.querySelector(".msg-user")?.innerText || "";
+      mensajesHTML += `
+        <div class="pdf-msg pdf-msg-user">
+          <div class="pdf-msg-bubble pdf-bubble-user">
+            <span class="pdf-who">Tú</span>
+            <p>${texto}</p>
+          </div>
+          <div class="pdf-avatar pdf-avatar-user">👤</div>
+        </div>`;
+    } else {
+      const texto = fila.querySelector(".msg-bot")?.innerText || "";
+      mensajesHTML += `
+        <div class="pdf-msg pdf-msg-bot">
+          <div class="pdf-avatar pdf-avatar-bot">🤖</div>
+          <div class="pdf-msg-bubble pdf-bubble-bot">
+            <span class="pdf-who">MoodCare IA</span>
+            <p>${texto}</p>
+          </div>
+        </div>`;
+    }
+  });
+
+  // ── Plantilla HTML del PDF ───────────────────────────────
+  const contenido = `
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      /* ── RESET ── */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #2d2d2d; }
+
+      /* ── PORTADA ── */
+      .pdf-cover {
+        background: linear-gradient(135deg, #1a1a2e 0%, #4c1d95 40%, #7c3aed 70%, #ec4899 100%);
+        color: #fff;
+        padding: 50px 40px 40px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 0 0 40px 40px;
+        margin-bottom: 30px;
+      }
+      .pdf-cover::before {
+        content: "";
+        position: absolute;
+        top: -60px; right: -60px;
+        width: 220px; height: 220px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+      }
+      .pdf-cover::after {
+        content: "";
+        position: absolute;
+        bottom: -40px; left: -40px;
+        width: 160px; height: 160px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.05);
+      }
+      .pdf-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+      .pdf-brand-name {
+        font-size: 32px;
+        font-weight: 900;
+        letter-spacing: 1px;
+      }
+      .pdf-brand-sub {
+        font-size: 13px;
+        opacity: 0.75;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      .pdf-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        opacity: 0.95;
+      }
+      .pdf-subtitle {
+        font-size: 13px;
+        opacity: 0.7;
+      }
+
+      /* ── INFO USUARIO ── */
+      .pdf-user-card {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: #f5f3ff;
+        border: 2px solid #ede9fe;
+        border-radius: 18px;
+        padding: 20px 24px;
+        margin: 0 30px 28px;
+      }
+      .pdf-user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #7c3aed;
+        flex-shrink: 0;
+      }
+      .pdf-user-info h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #4c1d95;
+        margin-bottom: 4px;
+      }
+      .pdf-user-info p {
+        font-size: 13px;
+        color: #6d6d6d;
+        margin-bottom: 2px;
+      }
+      .pdf-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #7c3aed, #ec4899);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 12px;
+        border-radius: 20px;
+        margin-top: 6px;
+        letter-spacing: 0.5px;
+      }
+
+      /* ── SEPARADOR ── */
+      .pdf-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 30px 22px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #7c3aed;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .pdf-divider::before,
+      .pdf-divider::after {
+        content: "";
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #c4b5fd, transparent);
+      }
+
+      /* ── MENSAJES ── */
+      .pdf-chat-area {
+        padding: 0 30px 20px;
+      }
+      .pdf-msg {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .pdf-msg-user {
+        flex-direction: row-reverse;
+      }
+      .pdf-avatar {
+        font-size: 22px;
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pdf-avatar-user { background: #ede9fe; }
+      .pdf-avatar-bot  { background: #fce7f3; }
+
+      .pdf-msg-bubble {
+        max-width: 72%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        font-size: 13.5px;
+        line-height: 1.6;
+      }
+      .pdf-bubble-user {
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        color: #fff;
+        border-bottom-right-radius: 4px;
+      }
+      .pdf-bubble-bot {
+        background: #f8f5ff;
+        border: 1.5px solid #ede9fe;
+        color: #2d2d2d;
+        border-bottom-left-radius: 4px;
+      }
+      .pdf-who {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.75;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .pdf-bubble-user .pdf-who { color: rgba(255,255,255,0.85); }
+      .pdf-bubble-bot  .pdf-who { color: #7c3aed; }
+
+      /* ── FOOTER ── */
+      .pdf-footer {
+        background: linear-gradient(135deg, #1a1a2e, #4c1d95);
+        color: rgba(255,255,255,0.7);
+        text-align: center;
+        padding: 18px;
+        font-size: 11px;
+        border-radius: 20px 20px 0 0;
+        margin: 20px 0 0;
+        letter-spacing: 0.5px;
+      }
+      .pdf-footer strong { color: #e9d5ff; }
+    </style>
+  </head>
+  <body>
+
+    <!-- PORTADA -->
+    <div class="pdf-cover">
+      <div class="pdf-brand">
+        <div>
+          <div class="pdf-brand-name">💜 MoodCare</div>
+          <div class="pdf-brand-sub">Bienestar emocional</div>
+        </div>
+      </div>
+      <div class="pdf-title">Reporte de Conversación Emocional</div>
+      <div class="pdf-subtitle">Generado el ${fechaStr} a las ${horaStr}</div>
+    </div>
+
+    <!-- TARJETA USUARIO -->
+    <div class="pdf-user-card">
+      <img class="pdf-user-avatar" src="${fotoPerfil}" alt="Foto de perfil"
+        onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=7c3aed&color=fff&size=64'">
+      <div class="pdf-user-info">
+        <h3>${nombre}</h3>
+        <p>📧 ${correo}</p>
+        <p>📅 Sesión: ${fechaStr}</p>
+        <span class="pdf-badge">✅ Conversación Verificada</span>
+      </div>
+    </div>
+
+    <!-- TRANSCRIPCION -->
+    <div class="pdf-divider">Transcripción del Chat</div>
+
+    <div class="pdf-chat-area">
+      ${mensajesHTML}
+    </div>
+
+    <!-- FOOTER -->
+    <div class="pdf-footer">
+      Reporte generado automáticamente por <strong>MoodCare</strong> &nbsp;·&nbsp;
+      Este documento es confidencial y de uso personal &nbsp;·&nbsp;
+      ${fechaStr}
+    </div>
+
+  </body>
+  </html>`;
+
+  // ── Crear elemento oculto y lanzar html2pdf ──────────────
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:800px;";
+  wrapper.innerHTML = contenido;
+  document.body.appendChild(wrapper);
+
+  const btn = document.getElementById("btnDescargarPDF");
+  if (btn) {
+    btn.innerHTML = `<span class="pdf-icon">⏳</span><span class="pdf-label">Generando...</span>`;
+    btn.disabled = true;
+  }
+
+  const opciones = {
+    margin: [0, 0, 0, 0],
+    filename: `MoodCare_Chat_${nombre.replace(/ /g, "_")}_${ahora.toISOString().slice(0, 10)}.pdf`,
+    image: { type: "jpeg", quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+  };
+
+  html2pdf().set(opciones).from(wrapper).save().then(() => {
+    document.body.removeChild(wrapper);
+    if (btn) {
+      btn.innerHTML = `<span class="pdf-icon">✅</span><span class="pdf-label">¡Descargado!</span>`;
+      setTimeout(() => {
+        btn.innerHTML = `<span class="pdf-icon">📥</span><span class="pdf-label">Reporte PDF</span>`;
+        btn.disabled = false;
+      }, 2500);
+    }
+  }).catch(err => {
+    document.body.removeChild(wrapper);
+    console.error("Error generando PDF:", err);
+    if (btn) {
+      btn.innerHTML = `<span class="pdf-icon">📥</span><span class="pdf-label">Reporte PDF</span>`;
+      btn.disabled = false;
+    }
+  });
+}
+
+
 /* ========================= */
 /* 🔐 SESIÓN (LOGIN) */
 /* ========================= */
@@ -29,14 +360,14 @@ function verificarSesion() {
   // =========================
   // 🚀 REDIRECCIÓN INICIAL (SOLO INDEX)
   // =========================
-if (paginaActual === "") {
-  if (esAdmin) {
-    window.location.replace("inicio_admin.html");
-  } else {
-    window.location.replace("inicio.html");
+  if (paginaActual === "") {
+    if (esAdmin) {
+      window.location.replace("inicio_admin.html");
+    } else {
+      window.location.replace("inicio.html");
+    }
+    return;
   }
-  return;
-}
 
   // =========================
   // 🧭 PÁGINAS
@@ -244,7 +575,7 @@ function activarEnter() {
   const input = document.getElementById("mensaje");
   if (!input) return;
 
-  input.addEventListener("keypress", function(e) {
+  input.addEventListener("keypress", function (e) {
     if (e.key === "Enter") {
       enviarMensaje();
     }
@@ -270,13 +601,13 @@ function iniciarReconocimiento() {
   reconocimiento.continuous = false;
   reconocimiento.interimResults = false;
 
-  reconocimiento.onresult = function(event) {
+  reconocimiento.onresult = function (event) {
     const texto = event.results[0][0].transcript;
     const input = document.getElementById("mensaje");
     if (input) input.value = texto;
   };
 
-  reconocimiento.onend = function() {
+  reconocimiento.onend = function () {
     escuchando = false;
     const btn = document.getElementById("btnMic");
     if (btn) btn.classList.remove("active");
@@ -304,11 +635,11 @@ function toggleMic() {
 /* INICIALIZACIÓN */
 /* ========================= */
 document.addEventListener("DOMContentLoaded", () => {
-  verificarSesion(); 
-  renderMenu(); 
+  verificarSesion();
+  renderMenu();
   activarMenu();
   mostrarUsuario();
-  mostrarSaludo(); 
+  mostrarSaludo();
   activarEnter();
   renderCalendario();
   cargarRecomendaciones();
@@ -350,8 +681,8 @@ function renderCalendario() {
   const mes = fechaActual.getMonth();
 
   const nombresMes = [
-    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
   mesLabel.innerText = `${nombresMes[mes]} ${año}`;
@@ -671,7 +1002,7 @@ function pintarCalendario(data) {
 ========================= */
 function pintarGrafica(data) {
 
-  const ultimos = data.slice(0,7).reverse();
+  const ultimos = data.slice(0, 7).reverse();
 
   const diasSemana = ["Do", "Lu", "Ma", "Mi", "Jue", "Vi", "Sa"];
 
@@ -792,7 +1123,7 @@ function getColor(e) {
   if (e.includes("triste")) return "#8E8773";
   if (e.includes("neutral")) return "#ccc";
   if (e.includes("enojado")) return "#3D372A";
-  
+
   return "#ddd";
 }
 
@@ -1325,28 +1656,28 @@ async function cargarUsuarios() {
 
     data.forEach(user => {
 
-    let estadoTexto = "Activo";
-    let claseEstado = "activo";
+      let estadoTexto = "Activo";
+      let claseEstado = "activo";
 
-    if (user.id_estado_usuario == 2) {
-      estadoTexto = "Bloqueado";
-      claseEstado = "bloqueado";
-    }
+      if (user.id_estado_usuario == 2) {
+        estadoTexto = "Bloqueado";
+        claseEstado = "bloqueado";
+      }
 
-    if (claseEstado === "activo") countActivos++;
-    if (claseEstado === "bloqueado") countBloqueados++;
+      if (claseEstado === "activo") countActivos++;
+      if (claseEstado === "bloqueado") countBloqueados++;
 
-    // 🔥 PUNTUACIÓN (ejemplo)
+      // 🔥 PUNTUACIÓN (ejemplo)
       const puntuacion =
         parseInt(user.promedio_emocional) || 0;
-        
-    let claseScore = "bajo";
 
-    if (puntuacion >= 80) claseScore = "alto";
-    else if (puntuacion >= 60) claseScore = "medio";
-    else if (puntuacion >= 40) claseScore = "riesgo";
+      let claseScore = "bajo";
 
-    tabla.innerHTML += `
+      if (puntuacion >= 80) claseScore = "alto";
+      else if (puntuacion >= 60) claseScore = "medio";
+      else if (puntuacion >= 40) claseScore = "riesgo";
+
+      tabla.innerHTML += `
       <tr data-estado="${claseEstado}"
       data-score="${puntuacion}"
       data-fecha="${user.creado_en}">
@@ -1394,7 +1725,7 @@ async function cargarUsuarios() {
 
       </tr>
     `;
-  });
+    });
 
     // 📊 CARDS
     if (total) total.innerText = data.length;
@@ -1449,7 +1780,7 @@ function abrirFiltros() {
 
 function cerrarFiltros() {
   document.getElementById("modalFiltros").classList.remove("active");
-} 
+}
 
 function aplicarFiltros() {
 
@@ -1522,7 +1853,7 @@ function limpiarFiltros() {
   cerrarFiltros();
 }
 
-window.onclick = function(e) {
+window.onclick = function (e) {
   const modal = document.getElementById("modalFiltros");
   if (e.target === modal) {
     modal.classList.remove("activo");
@@ -1613,7 +1944,7 @@ async function cargarEmocionesSemana() {
     const res = await fetch(`http://localhost:3000/historial/${user.id}`);
     const data = await res.json();
 
-    const dias = ["L","M","M","J","V","S","D"];
+    const dias = ["L", "M", "M", "J", "V", "S", "D"];
 
     let html = `<div class="linea-semana"></div>`;
 
@@ -1671,10 +2002,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function cargarChatsRecientes(){
+function cargarChatsRecientes() {
 
   const cont = document.getElementById("chatsRecientes");
-  if(!cont) return;
+  if (!cont) return;
 
   cont.innerHTML = `
   
@@ -1824,7 +2155,7 @@ function mostrarPerfilUsuario(
   foto,
   fecha,
   puntuacion
-){
+) {
 
   document.getElementById("perfilNombre").innerText =
     nombre;
@@ -1848,7 +2179,7 @@ function mostrarPerfilUsuario(
 // =========================
 // CERRAR PERFIL
 // =========================
-function ocultarPerfil(){
+function ocultarPerfil() {
 
   document.getElementById("ventanaPerfil").style.display =
     "none";
@@ -1941,7 +2272,7 @@ async function verPerfilUsuario(id) {
 
           <div>
             ${new Date(item.creado_en)
-              .toLocaleDateString()}
+          .toLocaleDateString()}
           </div>
 
         </div>
@@ -2024,7 +2355,7 @@ async function cargarRegistrosEmocionales() {
       }
 
       else if (emocion === "triste") {
-        emoji = "😢"; 
+        emoji = "😢";
         clase = "score-triste";
       }
 
@@ -2076,7 +2407,7 @@ async function cargarRegistrosEmocionales() {
           <td>
 
             ${new Date(item.creado_en)
-              .toLocaleDateString()}
+          .toLocaleDateString()}
 
           </td>
 
@@ -2143,7 +2474,7 @@ aplicarTemaInicial();
 
 async function cambiarTema(color) {
   document.documentElement.setAttribute('data-theme', color);
-  
+
   /* Actualizar UI */
   document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
   const activeBtn = document.querySelector(`.theme-btn[onclick="cambiarTema('${color}')"]`);

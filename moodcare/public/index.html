@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoodCare - Chat</title>
-
   <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
 
   <aside class="sidebar">
-
     <header>
       <h2>
         <img src="image/logo.png" alt="logo">
@@ -21,27 +19,22 @@
 
     <nav id="menu">
       <ul>
-
         <li class="menu-item" onclick="window.location.href='inicio.html'">
           <img src="image/casa.png" alt="">
           <span>Inicio</span>
         </li>
-
         <li class="menu-item active">
           <img src="image/chat.png" alt="">
           <span>Chat</span>
         </li>
-
         <li class="menu-item" onclick="window.location.href='registro.html'">
           <img src="image/registroemocional.png" alt="">
           <span>Registro emocional</span>
         </li>
-
         <li class="menu-item" onclick="window.location.href='historial.html'">
           <img src="image/historial.png" alt="">
           <span>Historial</span>
         </li>
-
       </ul>
     </nav>
 
@@ -56,11 +49,9 @@
     <footer>
       <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
     </footer>
-
   </aside>
 
   <main class="main" id="mainChat">
-
     <section class="chat-center" id="chatUI">
 
       <!-- Bienvenida (se oculta al chatear) -->
@@ -73,6 +64,12 @@
       <div class="chat-header" style="display:none;">
         <img src="image/logo.png" alt="logo" style="width:28px;height:28px;border-radius:50%;">
         <span>MoodCare</span>
+
+        <!-- Botón descargar PDF -->
+        <button id="btnDescargarPDF" onclick="descargarChatPDF()" title="Descargar conversación como PDF" class="btn-pdf-download">
+          <span class="pdf-icon">📥</span>
+          <span class="pdf-label">Reporte PDF</span>
+        </button>
       </div>
 
       <!-- Contenedor de mensajes -->
@@ -92,13 +89,10 @@
             <button id="btnClip" title="Adjuntar archivo">
               <img src="image/adjunto-archivo.png" alt="Adjuntar">
             </button>
-
             <button id="btnMic" onclick="toggleMic()" title="Dictado de voz">
               <img src="image/dictado de voz.png" alt="Micrófono">
             </button>
-
             <button id="btnVoz" onclick="toggleVoz()" title="Voz">🔊</button>
-
             <button id="btnEnviar" onclick="enviarMensaje()" title="Enviar">
               <img src="image/flecha.png" alt="Enviar">
             </button>
@@ -114,10 +108,11 @@
       </section>
 
     </section>
-    
   </main>
 
-<script src="app.js"></script>
+  <!-- html2pdf para generar PDF premium -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
