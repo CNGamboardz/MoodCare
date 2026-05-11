@@ -1,36 +1,96 @@
 :root {
   --primary-color: #8d846c;
   --primary-gradient: #a59b84;
+  --text-color: #ffffff;
+  --bubble-energia: #e9b3a2;
+  --bubble-energia-dark: #d9957f;
+  --bubble-ansiedad: #f2e8db;
+  --bubble-ansiedad-dark: #d9cbb8;
+  --bubble-triste: #9b927f;
+  --bubble-triste-dark: #7e7663;
+  --bar-energia: #d9957f;
+  --bar-ansiedad: #e6dccf;
+  --bar-triste: #8c8372;
 }
 
 /* Rosa pastel */
 :root[data-theme='pastel-pink'] {
-  --primary-color: #ffb6c1;
-  --primary-gradient: #ffcdd2;
+  --primary-color: #f4a7b9;
+  --primary-gradient: #fbc8d4;
+  --text-color: #111111;
+  --bubble-energia: #f5a0b8;
+  --bubble-energia-dark: #e8799a;
+  --bubble-ansiedad: #fbd4de;
+  --bubble-ansiedad-dark: #f5b8cb;
+  --bubble-triste: #d96088;
+  --bubble-triste-dark: #c75c7e;
+  --bar-energia: #e8799a;
+  --bar-ansiedad: #fbd4de;
+  --bar-triste: #c75c7e;
 }
 
 /* Azul pastel */
 :root[data-theme='pastel-blue'] {
-  --primary-color: #add8e6;
+  --primary-color: #87ceeb;
   --primary-gradient: #b3e5fc;
+  --text-color: #111111;
+  --bubble-energia: #7abede;
+  --bubble-energia-dark: #4fa8d5;
+  --bubble-ansiedad: #c5e8f5;
+  --bubble-ansiedad-dark: #a0d8ef;
+  --bubble-triste: #2c7fa8;
+  --bubble-triste-dark: #1a5f80;
+  --bar-energia: #4fa8d5;
+  --bar-ansiedad: #c5e8f5;
+  --bar-triste: #2c7fa8;
 }
 
 /* Verde pastel */
 :root[data-theme='pastel-green'] {
-  --primary-color: #98fb98;
+  --primary-color: #90ee90;
   --primary-gradient: #c8e6c9;
+  --text-color: #111111;
+  --bubble-energia: #78d878;
+  --bubble-energia-dark: #52b252;
+  --bubble-ansiedad: #c0e8c0;
+  --bubble-ansiedad-dark: #a0d4a0;
+  --bubble-triste: #2e7a2e;
+  --bubble-triste-dark: #1c5c1c;
+  --bar-energia: #52b252;
+  --bar-ansiedad: #c0e8c0;
+  --bar-triste: #2e7a2e;
 }
 
 /* Morado pastel */
 :root[data-theme='pastel-purple'] {
-  --primary-color: #dda0dd;
-  --primary-gradient: #e1bee7;
+  --primary-color: #c490c4;
+  --primary-gradient: #d8b4d8;
+  --text-color: #ffffff;
+  --bubble-energia: #c8a0c8;
+  --bubble-energia-dark: #a052a0;
+  --bubble-ansiedad: #ddb8dd;
+  --bubble-ansiedad-dark: #c898c8;
+  --bubble-triste: #6d2e6d;
+  --bubble-triste-dark: #4a1a4a;
+  --bar-energia: #a052a0;
+  --bar-ansiedad: #ddb8dd;
+  --bar-triste: #6d2e6d;
 }
 
 /* Café original */
 :root[data-theme='cafe'] {
   --primary-color: #8d846c;
   --primary-gradient: #a59b84;
+  --text-color: #ffffff;
+  --bubble-energia: #e9b3a2;
+  --bubble-energia-dark: #d9957f;
+  --bubble-ansiedad: #f2e8db;
+  --bubble-ansiedad-dark: #d9cbb8;
+  --bubble-triste: #9b927f;
+  --bubble-triste-dark: #7e7663;
+  --bar-energia: #d9957f;
+  --bar-ansiedad: #e6dccf;
+  --bar-triste: #8c8372;
 }
 
 /* RESET */
@@ -56,7 +116,8 @@ body {
   height: 100%;
   min-width: 11%;
   background: var(--primary-color);
-  color: white;
+  color: var(--text-color);
+  font-weight: 500;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -69,9 +130,12 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 900;
   margin-bottom: 20px;
+  color: var(--text-color);
+  -webkit-text-stroke: .6px black;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
 .sidebar h2 img {
@@ -174,7 +238,8 @@ input {
 
 button {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-color);
+  font-weight: bold;
   border: none;
   padding: 10px 12px;
   border-radius: 50%;
@@ -193,7 +258,8 @@ button {
 .option {
   padding: 8px 14px;
   border-radius: 20px;
-  background: #000000;
+  background: #ffffff;
+  color: #111 !important;
   cursor: pointer;
   transition: 0.2s;
 }
@@ -406,6 +472,7 @@ button:active {
 /* OPCIONES PREMIUM */
 .option {
   box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  color: #111 !important;
 }
 
 .option:hover {
@@ -415,7 +482,8 @@ button:active {
 /* MENSAJES TIPO APP */
 .msg-user {
   background: linear-gradient(135deg,var(--primary-color),var(--primary-gradient));
-  color: white;
+  color: var(--text-color);
+  font-weight: 500;
   padding: 10px 14px;
   border-radius: 16px 16px 4px 16px;
   max-width: 80%;
@@ -575,7 +643,7 @@ button:active {
 #btnVoz,
 .input-actions button:last-child {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-color);
 }
 
 /* HOVER */
@@ -622,7 +690,8 @@ button:active {
   margin-top: 10px;
   border: none;
   background: var(--primary-color);
-  color: white;
+  color: var(--text-color);
+  font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -758,7 +827,7 @@ button:active {
 
 .calendario-card {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-color);
   border-radius: 25px;
   padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -808,7 +877,7 @@ button:active {
 
 .fechas div {
   width: 100%;
-  height: 35px; /* 🔥 tamaño fijo */
+  height: 35px;
 
   display: flex;
   align-items: center;
@@ -818,6 +887,7 @@ button:active {
   cursor: pointer;
 
   font-size: 12px;
+  color: #111 !important;
 
   transition: all 0.2s ease;
 }
@@ -927,6 +997,7 @@ button:active {
 .reco-text strong {
   display: block;
   font-size: 15px;
+  color: #111 !important;
 
   white-space: nowrap;
   overflow: hidden;
@@ -1495,48 +1566,55 @@ body.login-page {
 .grafico-burbujas {
   position: relative;
   width: 100%;
-  height: 30vh; /* controla el espacio vertical */
+  height: 260px;
+  overflow: hidden;
 }
 
 /* 🔴 ENERGÍA (principal) */
 .estado-circulo.energia {
-  width: 20vh;
-  height: 20vh;
+  width: 18vh;
+  height: 18vh;
+  max-width: 160px;
+  max-height: 160px;
 
   position: absolute;
-  right: 20%;
-  top: 20%;
+  right: 10%;
+  top: 15%;
 
-  background: radial-gradient(circle at 30% 30%, #e9b3a2, #d9957f);
-  color: #3f342d;
+  background: radial-gradient(circle at 30% 30%, var(--bubble-energia), var(--bubble-energia-dark)) !important;
+  color: var(--text-color);
 }
 
 /* ⚫ TRISTE */
 .estado-circulo.triste {
-  width: 10vh;
-  height: 10vh;
+  width: 9vh;
+  height: 9vh;
+  max-width: 90px;
+  max-height: 90px;
 
   position: absolute;
-  left: 48%;
+  left: 42%;
   top: 5%;
 
-  background: radial-gradient(circle at 30% 30%, #9b927f, #7e7663);
-  color: white;
+  background: radial-gradient(circle at 30% 30%, var(--bubble-triste), var(--bubble-triste-dark)) !important;
+  color: var(--text-color);
 
   animation-delay: 2s;
 }
 
 /* 🟡 ANSIEDAD */
 .estado-circulo.ansiedad {
-  width: 9vh;
-  height: 9vh;
+  width: 8vh;
+  height: 8vh;
+  max-width: 85px;
+  max-height: 85px;
 
   position: absolute;
-  left: 46%;
-  top: 45%;
+  left: 40%;
+  top: 50%;
 
-  background: radial-gradient(circle at 30% 30%, #f2e8db, #d9cbb8);
-  color: #3f342d;
+  background: radial-gradient(circle at 30% 30%, var(--bubble-ansiedad), var(--bubble-ansiedad-dark)) !important;
+  color: var(--text-color);
 
   animation-delay: 1s;
 }
@@ -1564,17 +1642,17 @@ body.login-page {
   border-radius: 20px;
 }
 
-/* COLORES */
+/* COLORES — adaptados al tema */
 .energia-bar {
-  background: #d9957f;
+  background: var(--bar-energia, #d9957f);
 }
 
 .ansiedad-bar {
-  background: #e6dccf;
+  background: var(--bar-ansiedad, #e6dccf);
 }
 
 .triste-bar {
-  background: #8c8372;
+  background: var(--bar-triste, #8c8372);
 }
 
 /* ========================= */
@@ -1600,8 +1678,9 @@ body.login-page {
 /* SIDEBAR */
 .registro-sidebar {
   width: 220px;
-  background: #9c9277;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-color);
+  font-weight: 500;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -1611,6 +1690,11 @@ body.login-page {
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-color);
+  -webkit-text-stroke: 1.5px black;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .registro-logo img {
@@ -1706,8 +1790,8 @@ body.login-page {
 /* ========================= */
 
 .registro-calendar-box {
-  background: #9c9277;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-color);
   padding: 20px;
   border-radius: 25px;
 }
@@ -1731,8 +1815,8 @@ body.login-page {
   font-size: 13px;
   font-weight: bold;
 
-  background: rgba(255,255,255,0.15);
-  color: white;
+  background: rgba(255,255,255,0.2);
+  color: #111 !important;
 
   transition: 0.2s;
 }
@@ -1784,8 +1868,8 @@ canvas {
 
 .registro-reco {
   margin-top: 20px;
-  background: #9c9277;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-color);
   padding: 20px;
   border-radius: 25px;
 }
@@ -1950,7 +2034,8 @@ canvas {
 
 /* CARD PRINCIPAL (estado) */
 .registro-card.estado {
-  background: #bdb7ad; /* 🔥 color especial */
+  background: var(--primary-color);
+  color: var(--text-color);
 }
 
 /* CARDS CON ICONO */
@@ -1976,7 +2061,7 @@ canvas {
 /* TEXTOS */
 .registro-card p {
   font-size: 13px;
-  color: #444;
+  color: #000000;
 }
 
 .registro-card h2 {
@@ -2017,7 +2102,8 @@ canvas {
 
 /* card especial */
 .registro-card.estado {
-  background: #bdb7ad;
+  background: var(--primary-color);
+  color: var(--text-color);
 }
 
 #emojiEstado {
@@ -2320,7 +2406,7 @@ canvas {
 }
 
 .historial-sub {
-  color: #888;
+  color: #383838;
   margin-bottom: 25px;
 }
 
@@ -2393,7 +2479,8 @@ canvas {
 /* CARD TABLA */
 /* ========================= */
 .historial-card {
-  background: white;
+  background: var(--primary-color);
+  color: var(--text-color);
   padding: 25px;
   border-radius: 20px;
   margin-top: 30px;
@@ -2479,7 +2566,8 @@ canvas {
   height: 38px;
   border-radius: 50%;
   border: none;
-  background: #9c8f7a;
+  background: var(--primary-color);
+  color: var(--text-color);
   cursor: pointer;
   transition: 0.3s;
 }
@@ -2490,6 +2578,7 @@ canvas {
 
 .historial-acciones img {
   width: 18px;
+  filter: brightness(0);
 }
 
 /* ========================= */
@@ -2547,8 +2636,8 @@ canvas {
 }
 
 .btn-pagina.activa {
-  background: #9c8f7a;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-color);
 }
 
 /* ========================= */
@@ -3476,7 +3565,8 @@ canvas {
 /*INICIO NUEVA correcion*/
 
 body.inicio-page .calendario-card{
-  background:#a79f84 !important;
+  background: var(--primary-color) !important;
+  color: var(--text-color) !important;
   padding:20px 28px 18px 28px !important;
   border-radius:28px !important;
 }
@@ -3551,7 +3641,7 @@ body.inicio-page .fechas div{
   height:26px !important;
   margin:auto !important;
   font-size:13px !important;
-  color:#fff !important;
+  color: var(--text-color) !important;
   border-radius:50% !important;
   display:flex !important;
   justify-content:center !important;
@@ -3577,7 +3667,7 @@ body.inicio-page .cal-legend{
 body.inicio-page .cal-legend div{
   font-size:11px !important;
   white-space:nowrap !important;
-  color:#fff !important;
+  color: var(--text-color) !important;
   display:flex !important;
   align-items:center !important;
   gap:5px !important;
@@ -3601,8 +3691,23 @@ body.inicio-page .dot.triste{ background:#d6d2ca !important; }
 body.inicio-page .emociones-card,
 body.inicio-page .chat-recientes,
 body.inicio-page .recomendaciones-card{
-  background:#ffffff !important;
+  background: var(--primary-color) !important;
+  color: var(--text-color) !important;
   border-radius:28px !important;
+}
+
+/* Tarjeta Estado Emocional de Hoy (card big) */
+body.inicio-page .card.big {
+  background: var(--primary-color) !important;
+  color: var(--text-color) !important;
+  border-radius:28px !important;
+  overflow: hidden !important;
+}
+
+/* Asegura que el título de recomendaciones siempre legible */
+body.inicio-page .recomendaciones-card h3,
+body.inicio-page .recomendaciones-card h4 {
+  color: var(--text-color) !important;
 }
 
 /* ========================= */
@@ -3708,18 +3813,7 @@ body.inicio-page{
   overflow:hidden !important;
 }
 
-body.inicio-page .sidebar{
-  position:fixed !important;
-  top:0 !important;
-  left:0 !important;
-  width:265px !important;
-  height:100vh !important;
-  overflow:hidden !important;
-  z-index:1000 !important;
-}
-
 body.inicio-page .main{
-  margin-left:265px !important;
   height:100vh !important;
   overflow-y:auto !important;
   overflow-x:hidden !important;
@@ -3733,7 +3827,14 @@ body.inicio-page .main{
 /* ==================================================
    AJUSTE FINO HEADER + CARDS
    MÁS A LA IZQUIERDA Y UN POCO MÁS GRANDE
-================================================== */
+   ================================================== */
+.option, .reco-text strong, .btn-new-chat {
+  color: #111 !important;
+}
+
+.historial-acciones img {
+  filter: brightness(0);
+}
 
 .inicio-admin{
   padding-left:100px;
@@ -4759,4 +4860,99 @@ button {
 #tablaRegistros th:nth-child(4),
 #tablaRegistros td:nth-child(4) {
   width: 40%; /* Darle más espacio a la columna Nota */
+}
+
+
+/* ============================================= */
+/* DARK / LIGHT MODE */
+/* ============================================= */
+
+/* Boton flotante - esquina inferior derecha */
+#dark-mode-toggle {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a2e;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+#dark-mode-toggle:hover {
+  transform: scale(1.12);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.45);
+}
+
+body.dark-mode #dark-mode-toggle {
+  background: #f0f0f0;
+  color: #1a1a2e;
+  border-color: rgba(0,0,0,0.15);
+}
+
+/* -----------------------------------------------
+   DARK MODE: SOLO EL FONDO DEL AREA LIBRE
+   Las cartas, sidebar y elementos de UI NO se tocan.
+----------------------------------------------- */
+
+/* Fondo del body (todas las paginas) */
+body.dark-mode,
+body.dark-mode.inicio-page,
+body.dark-mode.registro-body {
+  background: #1a1a2e !important;
+}
+
+/* Fondo del area main en cada pagina */
+body.dark-mode .main,
+body.dark-mode .registro-main,
+body.dark-mode .historial-content {
+  background: #1a1a2e !important;
+}
+
+/* Textos que aparecen DIRECTAMENTE sobre el fondo oscuro */
+
+/* inicio.html: titulo de bienvenida */
+body.dark-mode .header-dashboard > h1,
+body.dark-mode .header-dashboard > p,
+body.dark-mode .header-dashboard > span {
+  color: #e0e0e0 !important;
+}
+
+/* registro.html: titulo de la pagina */
+body.dark-mode .registro-title,
+body.dark-mode .main > header h1,
+body.dark-mode .registro-main > header h1 {
+  color: #e0e0e0 !important;
+}
+
+/* historial.html: titulo y subtitulo */
+body.dark-mode .historial-content > header h1,
+body.dark-mode .historial-content > header p,
+body.dark-mode .historial-sub {
+  color: #e0e0e0 !important;
+}
+
+/* index.html (chat): titulo "MoodCare Assistant" y subtitulo */
+body.dark-mode #chatUI > header h1,
+body.dark-mode #chatUI > header p,
+body.dark-mode .chat-center > header h1,
+body.dark-mode .chat-center > header p {
+  color: #e0e0e0 !important;
+}
+
+/* Transicion suave SOLO del fondo */
+body,
+.main,
+.registro-main,
+.historial-content {
+  transition: background 0.35s ease;
 }

@@ -458,6 +458,20 @@ function nuevoChat() {
   document.getElementById("chat").innerHTML = ""; // limpia UI
 }
 
+// Llamado desde el sidebar en cualquier pagina
+function irANuevoChat() {
+  localStorage.removeItem("chatId");
+  const pagina = window.location.pathname.split("/").pop();
+  if (pagina === "index.html" || pagina === "") {
+    // Ya estamos en el chat, solo limpiamos
+    const chatEl = document.getElementById("chat");
+    if (chatEl) chatEl.innerHTML = "";
+  } else {
+    // Navegamos al chat con flag de nuevo chat
+    window.location.href = "index.html?nuevo=1";
+  }
+}
+
 /* ========================= */
 /* 📊 CARGAR ESTADO EMOCIONAL */
 /* ========================= */
@@ -977,6 +991,11 @@ function renderMenu() {
         <span>Chat</span>
       </div>
 
+      <div class="menu-item nuevo-chat-item" onclick="irANuevoChat()">
+        <img src="image/solicitud.png">
+        <span>Nuevo chat</span>
+      </div>
+
       <div class="menu-item" onclick="window.location.href='registro.html'">
         <img src="image/registroemocional.png">
         <span>Registro emocional</span>
@@ -990,12 +1009,15 @@ function renderMenu() {
   }
 
   const themePickerHTML = `
-    <div class="theme-picker">
-      <button class="theme-btn" style="background-color: #8d846c" onclick="cambiarTema('cafe')"></button>
-      <button class="theme-btn" style="background-color: #ffb6c1" onclick="cambiarTema('pastel-pink')"></button>
-      <button class="theme-btn" style="background-color: #add8e6" onclick="cambiarTema('pastel-blue')"></button>
-      <button class="theme-btn" style="background-color: #98fb98" onclick="cambiarTema('pastel-green')"></button>
-      <button class="theme-btn" style="background-color: #dda0dd" onclick="cambiarTema('pastel-purple')"></button>
+    <div class="theme-picker-container" style="margin-top: auto; display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
+      <p style="color: var(--text-color); font-size: 14px; font-weight: bold; margin-bottom: 8px;">Seleccione un tema</p>
+      <div class="theme-picker" style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+        <button class="theme-btn" style="background-color: #8d846c; border: 2px solid #000; border-radius: 50%; width: 22px; height: 22px; cursor: pointer;" onclick="cambiarTema('cafe')"></button>
+        <button class="theme-btn" style="background-color: #ffb6c1; border: 2px solid #000; border-radius: 50%; width: 22px; height: 22px; cursor: pointer;" onclick="cambiarTema('pastel-pink')"></button>
+        <button class="theme-btn" style="background-color: #add8e6; border: 2px solid #000; border-radius: 50%; width: 22px; height: 22px; cursor: pointer;" onclick="cambiarTema('pastel-blue')"></button>
+        <button class="theme-btn" style="background-color: #98fb98; border: 2px solid #000; border-radius: 50%; width: 22px; height: 22px; cursor: pointer;" onclick="cambiarTema('pastel-green')"></button>
+        <button class="theme-btn" style="background-color: #dda0dd; border: 2px solid #000; border-radius: 50%; width: 22px; height: 22px; cursor: pointer;" onclick="cambiarTema('pastel-purple')"></button>
+      </div>
     </div>
   `;
 
@@ -2136,3 +2158,37 @@ async function cambiarTema(color) {
     console.error('Error guardando tema:', err);
   }
 }
+
+/* ============================================= */
+/*  DARK / LIGHT MODE                            */
+/* ============================================= */
+
+function aplicarModoOscuroInicial() {
+  const modo = localStorage.getItem('darkMode');
+  if (modo === 'dark') {
+    document.body.classList.add('dark-mode');
+  }
+}
+
+function toggleDarkMode() {
+  const esDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', esDark ? 'dark' : 'light');
+  const btn = document.getElementById('dark-mode-toggle');
+  if (btn) btn.textContent = esDark ? '☀️' : '🌙';
+}
+
+function inyectarBotonDarkMode() {
+  if (document.getElementById('dark-mode-toggle')) return;
+  const btn = document.createElement('button');
+  btn.id = 'dark-mode-toggle';
+  btn.title = 'Cambiar modo oscuro / claro';
+  const esDark = document.body.classList.contains('dark-mode');
+  btn.textContent = esDark ? '☀️' : '🌙';
+  btn.addEventListener('click', toggleDarkMode);
+  document.body.appendChild(btn);
+}
+
+// Inicializar al cargar
+aplicarModoOscuroInicial();
+inyectarBotonDarkMode();
+
