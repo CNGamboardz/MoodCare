@@ -371,9 +371,9 @@ function detectarEmocion(texto) {
   if (texto.includes("enojado")) return { etiqueta: "enojado", puntuacion: 2 };
   if (texto.includes("estresado")) return { etiqueta: "estresado", puntuacion: 3 };
   if (texto.includes("cansado")) return { etiqueta: "cansado", puntuacion: 4 };
-  if  (texto.includes("aburrido")) return { etiqueta: "aburrido", puntuacion: 5 };
+  if (texto.includes("aburrido")) return { etiqueta: "aburrido", puntuacion: 5 };
   if (texto.includes("relajado")) return { etiqueta: "relajado", puntuacion: 7 };
-  if  (texto.includes("solo")) return { etiqueta: "solo", puntuacion: 3 };
+  if (texto.includes("solo")) return { etiqueta: "solo", puntuacion: 3 };
   if (texto.includes("conectado")) return { etiqueta: "conectado", puntuacion: 7 };
 
   return { etiqueta: "neutral", puntuacion: 6 };
@@ -827,10 +827,6 @@ app.post("/register-admin", upload.single("foto"), async (req, res) => {
       detail: error.detail
     });
 
-  } finally {
-
-    client.release();
-
   }
 
 });
@@ -946,7 +942,7 @@ app.get("/usuario/:id", async (req, res) => {
 
 });
 
-/*REGISTROS EMOCIONALES CON DATOS DE USUARIO (PARA ADMIN)*/   
+/*REGISTROS EMOCIONALES CON DATOS DE USUARIO (PARA ADMIN)*/
 app.get("/registros-emocionales", async (req, res) => {
 
   try {

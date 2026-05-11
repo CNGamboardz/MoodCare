@@ -10,330 +10,158 @@ function fill(text) {
 /* 📄 DESCARGAR CHAT COMO PDF — REPORTE PREMIUM            */
 /* ======================================================= */
 function descargarChatPDF() {
+  // Detectamos la librería de forma robusta
+  const jsPDFLib = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  
+  if (!jsPDFLib) {
+    alert("Error: No se encontró la librería jsPDF. Por favor, asegúrate de que esté cargada.");
+    return;
+  }
+
+  const doc = new jsPDFLib();
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const nombre = user.nombre || "Usuario";
   const correo = user.correo || "—";
-  const fotoPerfil = user.foto ? `uploads/${user.foto}` : "image/user.jpg";
-
-  // ── Recolectar mensajes del DOM ──────────────────────────
-  const chatEl = document.getElementById("chat");
-  if (!chatEl || chatEl.innerHTML.trim() === "") {
-    alert("¡Aún no hay mensajes en esta conversación!");
-    return;
-  }
+  const userId = user.id || Math.floor(Math.random() * 9000) + 1000;
 
   const ahora = new Date();
   const fechaStr = ahora.toLocaleDateString("es-MX", {
     year: "numeric", month: "long", day: "numeric"
   });
   const horaStr = ahora.toLocaleTimeString("es-MX", {
-    hour: "2-digit", minute: "2-digit"
+    hour: "2-digit", minute: "2-digit", hour12: true
   });
 
-  // Extraer mensajes
-  let mensajesHTML = "";
-  const filas = chatEl.querySelectorAll(".msg-user-row, .msg-bot-row");
+  // ── 1. ENCABEZADO MORADO ──
+  doc.setFillColor(124, 58, 237); // #7c3aed
+  doc.rect(0, 0, 210, 45, 'F');
+
+  // Logo Real
+  const logoImg = new Image();
+  logoImg.src = 'image/logo.png';
+  
+  // Intentamos añadir el logo si existe en el DOM o cargarlo
+  try {
+    // Buscamos el logo que ya está en la barra lateral para mayor rapidez
+    const existingLogo = document.querySelector(".sidebar header h2 img");
+    if (existingLogo) {
+      doc.addImage(existingLogo, 'PNG', 15, 12, 20, 20);
+    }
+  } catch (e) {
+    // Fallback: Círculo blanco si falla la carga
+    doc.setFillColor(255, 255, 255);
+    doc.circle(25, 22, 10, 'F');
+  }
+
+  // Títulos
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(28);
+  doc.text("MoodCare", 40, 22);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text("SISTEMA DE ASISTENCIA EMOCIONAL", 40, 28);
+
+  // Fecha y Hora (Derecha)
+  doc.setFontSize(10);
+  doc.text(`Generado el: ${fechaStr}`, 145, 20);
+  doc.text(`Hora: ${horaStr}`, 145, 26);
+
+  // ── 2. DATOS DEL USUARIO ──
+  doc.setDrawColor(221, 214, 254); // #ddd6fe
+  doc.setLineWidth(0.5);
+  doc.roundedRect(15, 55, 180, 35, 5, 5, 'D');
+
+  doc.setTextColor(124, 58, 237);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("DATOS DEL PACIENTE / USUARIO", 25, 65);
+
+  const shortId = userId.toString().slice(-4);
+  doc.setTextColor(55, 65, 81);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Nombre: ${nombre}`, 25, 74);
+  doc.text(`Email: ${correo}`, 25, 82);
+  doc.text(`Estado: Sesión Activa`, 120, 74);
+  doc.text(`ID: #MC-${shortId}`, 120, 82);
+
+  // ── 3. TRANSCRIPCIÓN ──
+  doc.setTextColor(124, 58, 237);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("TRANSCRIPCIÓN COMPLETA DE LA SESIÓN", 15, 105);
+  doc.setDrawColor(124, 58, 237);
+  doc.line(15, 107, 195, 107);
+
+  // ── 4. MENSAJES (DINÁMICO) ──
+  const chatEl = document.getElementById("chat");
+  const filas = chatEl ? chatEl.querySelectorAll(".msg-user-row, .msg-bot-row") : [];
+  
+  let y = 115;
+  const marginX = 20;
+  const boxWidth = 170;
 
   filas.forEach(fila => {
-    if (fila.classList.contains("msg-user-row")) {
-      const texto = fila.querySelector(".msg-user")?.innerText || "";
-      mensajesHTML += `
-        <div class="pdf-msg pdf-msg-user">
-          <div class="pdf-msg-bubble pdf-bubble-user">
-            <span class="pdf-who">Tú</span>
-            <p>${texto}</p>
-          </div>
-          <div class="pdf-avatar pdf-avatar-user">👤</div>
-        </div>`;
-    } else {
-      const texto = fila.querySelector(".msg-bot")?.innerText || "";
-      mensajesHTML += `
-        <div class="pdf-msg pdf-msg-bot">
-          <div class="pdf-avatar pdf-avatar-bot">🤖</div>
-          <div class="pdf-msg-bubble pdf-bubble-bot">
-            <span class="pdf-who">MoodCare IA</span>
-            <p>${texto}</p>
-          </div>
-        </div>`;
+    const isUser = fila.classList.contains("msg-user-row");
+    const label = isUser ? "TÚ" : "MOODCARE IA";
+    const texto = fila.querySelector(isUser ? ".msg-user" : ".msg-bot")?.innerText || "";
+    
+    if (texto.includes("MoodCare está escribiendo...")) return;
+
+    // Word Wrap
+    const splitText = doc.splitTextToSize(texto, boxWidth - 20);
+    const boxHeight = (splitText.length * 5) + 15;
+
+    // Salto de página si es necesario
+    if (y + boxHeight > 280) {
+      doc.addPage();
+      y = 20;
     }
+
+    // Fondo del mensaje
+    doc.setFillColor(isUser ? 245 : 249, isUser ? 243 : 250, isUser ? 255 : 251);
+    doc.roundedRect(marginX, y, boxWidth, boxHeight, 3, 3, 'F');
+
+    // Etiqueta (TÚ / IA)
+    doc.setTextColor(124, 58, 237);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text(label, marginX + 10, y + 8);
+
+    // Texto del mensaje
+    doc.setTextColor(31, 41, 55);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(splitText, marginX + 10, y + 16);
+
+    y += boxHeight + 8;
   });
 
-  // ── Plantilla HTML del PDF ───────────────────────────────
-  const contenido = `
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <style>
-      /* ── RESET ── */
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #2d2d2d; }
+  // Footer
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(156, 163, 175);
+    doc.text(`Página ${i} de ${pageCount} — MoodCare Reporte Oficial`, 105, 290, { align: "center" });
+  }
 
-      /* ── PORTADA ── */
-      .pdf-cover {
-        background: linear-gradient(135deg, #1a1a2e 0%, #4c1d95 40%, #7c3aed 70%, #ec4899 100%);
-        color: #fff;
-        padding: 50px 40px 40px;
-        position: relative;
-        overflow: hidden;
-        border-radius: 0 0 40px 40px;
-        margin-bottom: 30px;
-      }
-      .pdf-cover::before {
-        content: "";
-        position: absolute;
-        top: -60px; right: -60px;
-        width: 220px; height: 220px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.06);
-      }
-      .pdf-cover::after {
-        content: "";
-        position: absolute;
-        bottom: -40px; left: -40px;
-        width: 160px; height: 160px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.05);
-      }
-      .pdf-brand {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 28px;
-      }
-      .pdf-brand-name {
-        font-size: 32px;
-        font-weight: 900;
-        letter-spacing: 1px;
-      }
-      .pdf-brand-sub {
-        font-size: 13px;
-        opacity: 0.75;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-      }
-      .pdf-title {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 6px;
-        opacity: 0.95;
-      }
-      .pdf-subtitle {
-        font-size: 13px;
-        opacity: 0.7;
-      }
-
-      /* ── INFO USUARIO ── */
-      .pdf-user-card {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        background: #f5f3ff;
-        border: 2px solid #ede9fe;
-        border-radius: 18px;
-        padding: 20px 24px;
-        margin: 0 30px 28px;
-      }
-      .pdf-user-avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #7c3aed;
-        flex-shrink: 0;
-      }
-      .pdf-user-info h3 {
-        font-size: 18px;
-        font-weight: 700;
-        color: #4c1d95;
-        margin-bottom: 4px;
-      }
-      .pdf-user-info p {
-        font-size: 13px;
-        color: #6d6d6d;
-        margin-bottom: 2px;
-      }
-      .pdf-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #7c3aed, #ec4899);
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 12px;
-        border-radius: 20px;
-        margin-top: 6px;
-        letter-spacing: 0.5px;
-      }
-
-      /* ── SEPARADOR ── */
-      .pdf-divider {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 0 30px 22px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #7c3aed;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .pdf-divider::before,
-      .pdf-divider::after {
-        content: "";
-        flex: 1;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #c4b5fd, transparent);
-      }
-
-      /* ── MENSAJES ── */
-      .pdf-chat-area {
-        padding: 0 30px 20px;
-      }
-      .pdf-msg {
-        display: flex;
-        align-items: flex-end;
-        gap: 10px;
-        margin-bottom: 16px;
-      }
-      .pdf-msg-user {
-        flex-direction: row-reverse;
-      }
-      .pdf-avatar {
-        font-size: 22px;
-        flex-shrink: 0;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .pdf-avatar-user { background: #ede9fe; }
-      .pdf-avatar-bot  { background: #fce7f3; }
-
-      .pdf-msg-bubble {
-        max-width: 72%;
-        padding: 12px 16px;
-        border-radius: 18px;
-        font-size: 13.5px;
-        line-height: 1.6;
-      }
-      .pdf-bubble-user {
-        background: linear-gradient(135deg, #7c3aed, #a855f7);
-        color: #fff;
-        border-bottom-right-radius: 4px;
-      }
-      .pdf-bubble-bot {
-        background: #f8f5ff;
-        border: 1.5px solid #ede9fe;
-        color: #2d2d2d;
-        border-bottom-left-radius: 4px;
-      }
-      .pdf-who {
-        display: block;
-        font-size: 11px;
-        font-weight: 700;
-        opacity: 0.75;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .pdf-bubble-user .pdf-who { color: rgba(255,255,255,0.85); }
-      .pdf-bubble-bot  .pdf-who { color: #7c3aed; }
-
-      /* ── FOOTER ── */
-      .pdf-footer {
-        background: linear-gradient(135deg, #1a1a2e, #4c1d95);
-        color: rgba(255,255,255,0.7);
-        text-align: center;
-        padding: 18px;
-        font-size: 11px;
-        border-radius: 20px 20px 0 0;
-        margin: 20px 0 0;
-        letter-spacing: 0.5px;
-      }
-      .pdf-footer strong { color: #e9d5ff; }
-    </style>
-  </head>
-  <body>
-
-    <!-- PORTADA -->
-    <div class="pdf-cover">
-      <div class="pdf-brand">
-        <div>
-          <div class="pdf-brand-name">💜 MoodCare</div>
-          <div class="pdf-brand-sub">Bienestar emocional</div>
-        </div>
-      </div>
-      <div class="pdf-title">Reporte de Conversación Emocional</div>
-      <div class="pdf-subtitle">Generado el ${fechaStr} a las ${horaStr}</div>
-    </div>
-
-    <!-- TARJETA USUARIO -->
-    <div class="pdf-user-card">
-      <img class="pdf-user-avatar" src="${fotoPerfil}" alt="Foto de perfil"
-        onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=7c3aed&color=fff&size=64'">
-      <div class="pdf-user-info">
-        <h3>${nombre}</h3>
-        <p>📧 ${correo}</p>
-        <p>📅 Sesión: ${fechaStr}</p>
-        <span class="pdf-badge">✅ Conversación Verificada</span>
-      </div>
-    </div>
-
-    <!-- TRANSCRIPCION -->
-    <div class="pdf-divider">Transcripción del Chat</div>
-
-    <div class="pdf-chat-area">
-      ${mensajesHTML}
-    </div>
-
-    <!-- FOOTER -->
-    <div class="pdf-footer">
-      Reporte generado automáticamente por <strong>MoodCare</strong> &nbsp;·&nbsp;
-      Este documento es confidencial y de uso personal &nbsp;·&nbsp;
-      ${fechaStr}
-    </div>
-
-  </body>
-  </html>`;
-
-  // ── Crear elemento oculto y lanzar html2pdf ──────────────
-  const wrapper = document.createElement("div");
-  wrapper.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:800px;";
-  wrapper.innerHTML = contenido;
-  document.body.appendChild(wrapper);
-
+  // Descarga
   const btn = document.getElementById("btnDescargarPDF");
   if (btn) {
     btn.innerHTML = `<span class="pdf-icon">⏳</span><span class="pdf-label">Generando...</span>`;
     btn.disabled = true;
   }
 
-  const opciones = {
-    margin: [0, 0, 0, 0],
-    filename: `MoodCare_Chat_${nombre.replace(/ /g, "_")}_${ahora.toISOString().slice(0, 10)}.pdf`,
-    image: { type: "jpeg", quality: 0.95 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-  };
+  doc.save(`Reporte_MoodCare_${nombre.replace(/ /g, "_")}.pdf`);
 
-  html2pdf().set(opciones).from(wrapper).save().then(() => {
-    document.body.removeChild(wrapper);
-    if (btn) {
-      btn.innerHTML = `<span class="pdf-icon">✅</span><span class="pdf-label">¡Descargado!</span>`;
-      setTimeout(() => {
-        btn.innerHTML = `<span class="pdf-icon">📥</span><span class="pdf-label">Reporte PDF</span>`;
-        btn.disabled = false;
-      }, 2500);
-    }
-  }).catch(err => {
-    document.body.removeChild(wrapper);
-    console.error("Error generando PDF:", err);
-    if (btn) {
+  if (btn) {
+    btn.innerHTML = `<span class="pdf-icon">✅</span><span class="pdf-label">¡Descargado!</span>`;
+    setTimeout(() => {
       btn.innerHTML = `<span class="pdf-icon">📥</span><span class="pdf-label">Reporte PDF</span>`;
       btn.disabled = false;
-    }
-  });
+    }, 2500);
+  }
 }
 
 
