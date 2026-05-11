@@ -3601,7 +3601,8 @@ canvas {
   align-items: center;
 }
 
-.modal-filtros.active {
+.modal-filtros.active,
+.modal-filtros.activo {
   display: flex;
 }
 
@@ -3640,7 +3641,8 @@ canvas {
 }
 
 /* ACTIVO */
-.modal-filtros.activo {
+.modal-filtros.activo,
+.modal-filtros.active {
   display: flex;
 }
 
@@ -3691,25 +3693,33 @@ canvas {
 .grupo label {
   display: flex;
   align-items: center;
+  flex-direction: row;
   gap: 10px;
   font-size: 14px;
   margin-bottom: 8px;
   cursor: pointer;
-
   font-weight: normal;
-  /* 🔥 ya no en negritas */
   justify-content: flex-start;
-  /* 🔥 todo a la izquierda */
+  text-align: left;
 }
 
 /* RADIO */
 .grupo input[type="radio"] {
   accent-color: #9c8f7a;
   margin: 0;
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .grupo label input {
   transform: scale(1.1);
+  flex-shrink: 0;
+  order: 0;
+}
+
+.grupo label span {
+  order: 1;
+  flex: 1;
 }
 
 /* BOTONES */
@@ -3717,15 +3727,22 @@ canvas {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+  gap: 10px;
 }
 
 /* LIMPIAR */
 .acciones button:first-child {
   background: #e6e1db;
   border: none;
-  padding: 10px 18px;
+  padding: 10px 24px;
   border-radius: 20px;
   cursor: pointer;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  /* Override del button global */
+  width: auto;
+  height: auto;
 }
 
 /* APLICAR */
@@ -3733,29 +3750,48 @@ canvas {
   background: #9c8f7a;
   color: white;
   border: none;
-  padding: 10px 18px;
+  padding: 10px 24px;
   border-radius: 20px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  /* Override del button global */
+  width: auto;
+  height: auto;
 }
 
 /* HOVER */
 .acciones button:hover {
-  opacity: 0.85;
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 .opcion {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
-
   justify-content: flex-start;
-  /* 🔥 CLAVE */
   text-align: left;
-  /* 🔥 CLAVE */
-
   margin-bottom: 10px;
   font-size: 14px;
   cursor: pointer;
+  width: 100%;
+}
+
+.opcion input[type="radio"] {
+  accent-color: #9c8f7a;
+  margin: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  transform: scale(1.1);
+  order: 0;
+}
+
+.opcion span {
+  order: 1;
+  flex: 1;
+  font-weight: normal;
 }
 
 /*INICIO NUEVA correcion*/
