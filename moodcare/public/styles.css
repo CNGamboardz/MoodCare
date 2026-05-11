@@ -4319,10 +4319,6 @@ button {
   background: #c7bcac;
   border-radius: 20px;
 }
-<<<<<<< HEAD
-
-
-
 /* ========================================= */
 /* PANEL GENERAL */
 /* ========================================= */
@@ -4709,5 +4705,22 @@ button {
     font-size: 30px;
   }
 }
-=======
->>>>>>> d4c0ae4d0d1aa5eed864f2fa91e53bcff0dd0888
+
+/* ========================================= */
+/* FIX TABLA REGISTROS - SALTO DE LÍNEA      */
+/* ========================================= */
+#tablaRegistros {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#tablaRegistros td {
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+#tablaRegistros th:nth-child(4),
+#tablaRegistros td:nth-child(4) {
+  width: 40%; /* Darle más espacio a la columna Nota */
+}
