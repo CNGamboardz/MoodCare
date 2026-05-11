@@ -988,6 +988,18 @@ function renderMenu() {
       </div>
     `;
   }
+
+  const themePickerHTML = `
+    <div class="theme-picker">
+      <button class="theme-btn" style="background-color: #8d846c" onclick="cambiarTema('cafe')"></button>
+      <button class="theme-btn" style="background-color: #ffb6c1" onclick="cambiarTema('pastel-pink')"></button>
+      <button class="theme-btn" style="background-color: #add8e6" onclick="cambiarTema('pastel-blue')"></button>
+      <button class="theme-btn" style="background-color: #98fb98" onclick="cambiarTema('pastel-green')"></button>
+      <button class="theme-btn" style="background-color: #dda0dd" onclick="cambiarTema('pastel-purple')"></button>
+    </div>
+  `;
+
+  menu.innerHTML += themePickerHTML;
 }
 
 function activarMenu() {
@@ -2085,4 +2097,42 @@ if (buscadorRegistro) {
 
   });
 
+}
+
+/* ========================= */
+/* 🎨 TEMAS PERSONALIZADOS */
+/* ========================= */
+function aplicarTemaInicial() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user && user.tema) {
+    document.documentElement.setAttribute('data-theme', user.tema);
+  } else {
+    document.documentElement.setAttribute('data-theme', 'cafe');
+  }
+}
+aplicarTemaInicial();
+
+async function cambiarTema(color) {
+  document.documentElement.setAttribute('data-theme', color);
+  
+  /* Actualizar UI */
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.querySelector(`.theme-btn[onclick="cambiarTema('${color}')"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) return;
+
+  user.tema = color;
+  localStorage.setItem('user', JSON.stringify(user));
+
+  try {
+    await fetch('http://localhost:3000/api/usuario/tema', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, tema: color })
+    });
+  } catch (err) {
+    console.error('Error guardando tema:', err);
+  }
 }

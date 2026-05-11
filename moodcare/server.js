@@ -109,6 +109,7 @@ app.post("/login", async (req, res) => {
         u.correo,
         u.password_hash,
         u.foto_perfil,
+        u.tema,
         r.nombre AS rol
       FROM usuarios u
       LEFT JOIN usuarios_roles ur ON u.id_usuario = ur.id_usuario
@@ -138,6 +139,7 @@ app.post("/login", async (req, res) => {
         nombre: user.nombre,
         correo: user.correo,
         foto: user.foto_perfil,
+        tema: user.tema,
         rol: user.rol // 🔥 CLAVE
       }
     });
@@ -145,6 +147,24 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.json({ ok: false, msg: "Error servidor" });
+  }
+});
+
+// =========================
+// 🎨 TEMA
+// =========================
+app.put("/api/usuario/tema", async (req, res) => {
+  const { userId, tema } = req.body;
+
+  try {
+    await pool.query(
+      `UPDATE usuarios SET tema = $1 WHERE id_usuario = $2`,
+      [tema, userId]
+    );
+    res.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, error: "Error actualizando tema" });
   }
 });
 

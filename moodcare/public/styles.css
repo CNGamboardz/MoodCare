@@ -1,3 +1,38 @@
+:root {
+  --primary-color: #8d846c;
+  --primary-gradient: #a59b84;
+}
+
+/* Rosa pastel */
+:root[data-theme='pastel-pink'] {
+  --primary-color: #ffb6c1;
+  --primary-gradient: #ffcdd2;
+}
+
+/* Azul pastel */
+:root[data-theme='pastel-blue'] {
+  --primary-color: #add8e6;
+  --primary-gradient: #b3e5fc;
+}
+
+/* Verde pastel */
+:root[data-theme='pastel-green'] {
+  --primary-color: #98fb98;
+  --primary-gradient: #c8e6c9;
+}
+
+/* Morado pastel */
+:root[data-theme='pastel-purple'] {
+  --primary-color: #dda0dd;
+  --primary-gradient: #e1bee7;
+}
+
+/* Café original */
+:root[data-theme='cafe'] {
+  --primary-color: #8d846c;
+  --primary-gradient: #a59b84;
+}
+
 /* RESET */
 * {
   box-sizing: border-box;
@@ -20,7 +55,7 @@ body {
   width: 16%;
   height: 100%;
   min-width: 11%;
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
   padding: 20px;
   display: flex;
@@ -138,7 +173,7 @@ input {
 }
 
 button {
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
   border: none;
   padding: 10px 12px;
@@ -379,7 +414,7 @@ button:active {
 
 /* MENSAJES TIPO APP */
 .msg-user {
-  background: linear-gradient(135deg,#8d846c,#9a9279);
+  background: linear-gradient(135deg,var(--primary-color),var(--primary-gradient));
   color: white;
   padding: 10px 14px;
   border-radius: 16px 16px 4px 16px;
@@ -454,7 +489,7 @@ button:active {
   width: 42px;
   height: 42px;
 
-  border: 2px solid #8d846c; /* 👈 contorno */
+  border: 2px solid var(--primary-color); /* 👈 contorno */
   border-radius: 50%;
 
   background: transparent; /* 👈 sin fondo */
@@ -529,7 +564,7 @@ button:active {
 /* 🎤 MIC (solo contorno) */
 #btnMic {
   background: transparent;
-  border: 2px solid #8d846c;
+  border: 2px solid var(--primary-color);
 }
 
 #btnMic img {
@@ -539,7 +574,7 @@ button:active {
 /* 🔊 Y ENVIAR */
 #btnVoz,
 .input-actions button:last-child {
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
 }
 
@@ -586,7 +621,7 @@ button:active {
   padding: 12px;
   margin-top: 10px;
   border: none;
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
   border-radius: 10px;
   cursor: pointer;
@@ -704,7 +739,7 @@ button:active {
 .pequeño {
   width: 60px;
   height: 60px;
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
 }
 
@@ -722,7 +757,7 @@ button:active {
 /* ========================= */
 
 .calendario-card {
-  background: #8d846c;
+  background: var(--primary-color);
   color: white;
   border-radius: 25px;
   padding: 20px;
